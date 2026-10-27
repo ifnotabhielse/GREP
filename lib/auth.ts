@@ -5,6 +5,8 @@ import { db } from "./db";
 import { supabaseConfigured, supabaseServer } from "./supabase";
 
 export const E2E_ADMIN_COOKIE = "e2e-admin";
+/** Remembers which email is signing in, between "email me a code" and "enter the code". */
+export const LOGIN_EMAIL_COOKIE = "grep-login-email";
 
 /**
  * Test-only sign-in shortcut, used by the Playwright suite because tests can't open magic-link emails.

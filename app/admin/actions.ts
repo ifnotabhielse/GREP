@@ -3,7 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { E2E_ADMIN_COOKIE, isAdminEmail, requireAdmin } from "@/lib/auth";
+import { E2E_ADMIN_COOKIE, LOGIN_EMAIL_COOKIE, isAdminEmail, requireAdmin } from "@/lib/auth";
 import { COHORTS_TAG } from "@/lib/cohorts";
 import { db } from "@/lib/db";
 import { paceToSec } from "@/lib/pace";
@@ -12,7 +12,13 @@ import { supabaseConfigured, supabaseServer } from "@/lib/supabase";
 
 // ---------- Sign in / out ----------
 
-/** Sends a magic link only to emails on the admin list, but always shows the same message. */
+const LOGIN_COOKIE_OPTS = { httpOnly: true, sameSite: "lax" as const, secure: process.env.NODE_ENV === "production", path: "/admin", maxAge: 60 * 60 };
+
+/**
+ * Emails a one-time code (and a link) only to emails on the admin list, but always shows the same
+ * message, so the form never reveals who is an admin. The email being signed in is remembered in a
+ * short-lived cookie for the code step, not put in the URL.
+ */
 export async function requestLoginLink(formData: FormData) {
   const email = String(formData.get("email") || "").trim().toLowerCase().slice(0, 254);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect("/admin/login?error=email");
@@ -27,7 +33,29 @@ export async function requestLoginLink(formData: FormData) {
       redirect("/admin/login?error=send");
     }
   }
+  (await cookies()).set(LOGIN_EMAIL_COOKIE, email, LOGIN_COOKIE_OPTS);
   redirect("/admin/login?sent=1");
+}
+
+/** Checks the code from the email. Works in any browser, unlike the link. */
+export async function verifyLoginCode(formData: FormData) {
+  const store = await cookies();
+  const email = store.get(LOGIN_EMAIL_COOKIE)?.value || "";
+  const code = String(formData.get("code") || "").replace(/\s/g, "");
+  if (!email) redirect("/admin/login");
+  if (!/^\d{6,10}$/.test(code) || !supabaseConfigured()) redirect("/admin/login?error=code");
+  const { error } = await (await supabaseServer()).auth.verifyOtp({ email, token: code, type: "email" });
+  if (error) {
+    console.error("verifyLoginCode:", error.message);
+    redirect("/admin/login?error=code");
+  }
+  store.delete({ name: LOGIN_EMAIL_COOKIE, path: "/admin" });
+  redirect("/admin");
+}
+
+export async function changeLoginEmail() {
+  (await cookies()).delete({ name: LOGIN_EMAIL_COOKIE, path: "/admin" });
+  redirect("/admin/login");
 }
 
 export async function signOut() {

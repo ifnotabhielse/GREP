@@ -100,8 +100,17 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
       next.cohort = "";
       label = "";
     }
-    setV(next);
-    setCohortLabel(label);
+    // Anything typed before this ran wins over the saved draft.
+    setV((typed) => {
+      const merged = { ...next };
+      for (const k of Object.keys(typed) as (keyof ApplicationInput)[]) {
+        const t = typed[k];
+        const changed = Array.isArray(t) ? t.length > 0 : typeof t === "boolean" ? t : t !== "" && t !== EMPTY_INPUT[k];
+        if (changed) (merged as Record<string, unknown>)[k] = t;
+      }
+      return merged;
+    });
+    setCohortLabel((typed) => typed || label);
     setLoaded(true);
   }, [presets]);
   /* eslint-enable react-hooks/set-state-in-effect */

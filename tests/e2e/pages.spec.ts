@@ -44,10 +44,13 @@ test("cohort page shows its details and link-preview tags", async ({ page, reque
 
 test("unpublished and unknown cohorts are not shown", async ({ page }) => {
   await sql()`insert into cohorts (slug, kind, name, published) values ('secret-draft', 'goal', 'Secret draft', false) on conflict (slug) do nothing`;
-  await page.goto("/c/secret-draft");
-  await expect(page.locator("body")).toContainText("could not be found");
-  await page.goto("/c/does-not-exist");
-  await expect(page.locator("body")).toContainText("could not be found");
+  for (const path of ["/c/secret-draft", "/c/does-not-exist"]) {
+    const res = await page.goto(path);
+    expect(res?.status()).toBeLessThan(500);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cohort not found.");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
+    await expect(page.locator("body")).not.toContainText("Secret draft");
+  }
 });
 
 test("privacy and terms are linked from the footer and the consent box", async ({ page }) => {

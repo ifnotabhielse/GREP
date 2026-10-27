@@ -532,3 +532,6 @@ select.input{
 .status-applied{ background:var(--accent-soft); color:var(--accent); }
 .status-placed{ background:var(--ok-soft); color:var(--ok); }
 .chip-tag{ display:inline-block; margin-top:4px; padding:1px 8px; border-radius:980px; background:var(--surface-3); color:var(--fg-2); font-size:11px; }
+.admin-switch{ margin-top:16px; text-align:center; }
+.as-link{ background:none; border:0; padding:6px 0; color:var(--accent); font:inherit; font-size:14px; cursor:pointer; }
+.as-link:hover{ text-decoration:underline; }

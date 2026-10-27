@@ -24,11 +24,19 @@ test("admin pages require an admin", async ({ page, context }) => {
   expect(csv.status()).toBe(307);
 });
 
-test("login form never reveals who is an admin", async ({ page }) => {
+test("login asks for an emailed code and never reveals who is an admin", async ({ page }) => {
   await page.goto("/admin/login");
   await page.fill("#admin-email", "nobody@example.com");
-  await page.getByRole("button", { name: "Email me a link" }).click();
+  await page.getByRole("button", { name: "Email me a code" }).click();
   await expect(page.locator(".admin-notice")).toContainText("If that email is on the admin list");
+  // The email is kept in a cookie for the code step, not in the URL.
+  await expect(page).toHaveURL(/\/admin\/login\?sent=1$/);
+  await expect(page.getByLabel("Code sent to nobody@example.com")).toBeVisible();
+  await page.fill("#admin-code", "123456");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page.locator(".admin-notice")).toHaveText("That code didn't work. Check it, or ask for a new one.");
+  await page.getByRole("button", { name: /Use a different email/ }).click();
+  await expect(page.locator("#admin-email")).toBeVisible();
 });
 
 test("place an applicant, filter, and export CSV", async ({ page }, info) => {
