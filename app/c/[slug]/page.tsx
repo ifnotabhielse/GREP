@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Footer, Nav } from "@/components/chrome";
 import { PaceMini, STATUS_PILL, SessionLines, joinText, paceText, raceLine, startsText } from "@/components/cohort-card";
 import { CohortJoinButton } from "@/components/cohort-join-button";
 import { ShareButton } from "@/components/share-button";
 import { getPublishedCohort, getPublishedCohorts, toPreset, type Cohort } from "@/lib/cohorts";
 
+// Prerender every published cohort at build; new ones render on first visit, then stay cached.
+export const revalidate = 300;
+
 export async function generateStaticParams() {
   const cohorts = await getPublishedCohorts();
-  // Cache Components needs at least one param; a placeholder simply 404s.
-  return cohorts.length ? cohorts.map((c) => ({ slug: c.slug })) : [{ slug: "none" }];
+  return cohorts.map((c) => ({ slug: c.slug }));
 }
 
 function summary(c: Cohort) {
@@ -37,9 +40,7 @@ export async function generateMetadata({ params }: PageProps<"/c/[slug]">): Prom
 export default async function CohortPage({ params }: PageProps<"/c/[slug]">) {
   const { slug } = await params;
   const c = await getPublishedCohort(slug);
-  // Rendered inline rather than with notFound(): on Netlify, notFound() during an on-demand
-  // render of this partly prerendered route returned a 500 (seen live on 27 Oct 2026).
-  if (!c) return <CohortNotFound />;
+  if (!c) notFound();
 
   const pill = STATUS_PILL[c.status];
   const isRace = c.kind === "race";
@@ -140,31 +141,6 @@ export default async function CohortPage({ params }: PageProps<"/c/[slug]">) {
                 can change.
               </p>
             )}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
-  );
-}
-
-function CohortNotFound() {
-  return (
-    <>
-      <Nav />
-      <main id="top">
-        <section className="cohort-hero" aria-labelledby="cohort-title">
-          <div className="wrap">
-            <p className="eyebrow">Cohorts · Hyderabad</p>
-            <h1 className="section-title" id="cohort-title">
-              Cohort not found.
-            </h1>
-            <p className="section-lede">This cohort has finished, moved, or the link has a typo.</p>
-            <p className="cohort-note">
-              <Link className="link" href="/#cohorts">
-                See all cohorts ›
-              </Link>
-            </p>
           </div>
         </section>
       </main>

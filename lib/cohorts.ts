@@ -1,5 +1,5 @@
 import "server-only";
-import { cacheLife, cacheTag } from "next/cache";
+import { cache } from "react";
 import { db } from "./db";
 
 export type CohortStatus = "forming" | "waitlist" | "active" | "done";
@@ -41,30 +41,22 @@ export const COHORT_COLUMNS = `
   status::text, pace_min_sec, pace_max_sec, pace_note, join_label, join_target, target_month::text,
   published, sort_order`;
 
-export const COHORTS_TAG = "cohorts";
-
-/** Published cohorts shown on the home page (finished ones are hidden). Cached; edits in /admin refresh it. */
-export async function getPublishedCohorts(): Promise<Cohort[]> {
-  "use cache";
-  cacheTag(COHORTS_TAG);
-  cacheLife({ stale: 60, revalidate: 300, expire: 86400 });
+/** Published cohorts shown on the home page (finished ones are hidden). Pages using this are ISR-cached. */
+export const getPublishedCohorts = cache(async (): Promise<Cohort[]> => {
   const rows = await db().unsafe<Cohort[]>(
     `select ${COHORT_COLUMNS} from public.cohorts
      where published and status <> 'done'
      order by sort_order, created_at`,
   );
   return rows.map((r) => ({ ...r }));
-}
+});
 
 /** One published cohort by slug, including finished ones (old links keep working). */
-export async function getPublishedCohort(slug: string): Promise<Cohort | null> {
-  "use cache";
-  cacheTag(COHORTS_TAG, `cohort-${slug}`);
-  cacheLife({ stale: 60, revalidate: 300, expire: 86400 });
+export const getPublishedCohort = cache(async (slug: string): Promise<Cohort | null> => {
   if (!/^[a-z0-9-]{1,80}$/.test(slug)) return null;
   const rows = await db().unsafe<Cohort[]>(`select ${COHORT_COLUMNS} from public.cohorts where published and slug = $1`, [slug]);
   return rows[0] ? { ...rows[0] } : null;
-}
+});
 
 /** What the join form needs to pre-fill when someone picks a cohort. */
 export type CohortPreset = { slug: string; label: string; activity: string; target: string; month: string };

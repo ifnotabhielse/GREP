@@ -8,6 +8,7 @@ import { secToPace } from "@/lib/pace";
 export const alt = "A GREP training cohort";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const revalidate = 300;
 
 const fontDir = join(process.cwd(), "node_modules/@fontsource/inter/files");
 const fonts = Promise.all([

@@ -4,6 +4,9 @@ import { JoinForm } from "@/components/join-form";
 import { Bento, Faq, Hero, HowItWorks, Statement } from "@/components/landing";
 import { getPublishedCohorts, toPreset } from "@/lib/cohorts";
 
+// Refresh from the database at most every 5 minutes; admin edits refresh it immediately.
+export const revalidate = 300;
+
 export default async function Home() {
   const cohorts = await getPublishedCohorts();
   return (

@@ -46,9 +46,9 @@ test("unpublished and unknown cohorts are not shown", async ({ page }) => {
   await sql()`insert into cohorts (slug, kind, name, published) values ('secret-draft', 'goal', 'Secret draft', false) on conflict (slug) do nothing`;
   for (const path of ["/c/secret-draft", "/c/does-not-exist"]) {
     const res = await page.goto(path);
-    expect(res?.status()).toBeLessThan(500);
+    expect(res?.status()).toBe(404);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cohort not found.");
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
+    await expect(page.locator('meta[name="robots"][content^="noindex"]').first()).toBeAttached();
     await expect(page.locator("body")).not.toContainText("Secret draft");
   }
 });

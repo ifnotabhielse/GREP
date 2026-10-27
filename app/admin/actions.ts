@@ -1,10 +1,9 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { E2E_ADMIN_COOKIE, LOGIN_EMAIL_COOKIE, isAdminEmail, requireAdmin } from "@/lib/auth";
-import { COHORTS_TAG } from "@/lib/cohorts";
 import { db } from "@/lib/db";
 import { paceToSec } from "@/lib/pace";
 import { siteUrl } from "@/lib/request";
@@ -197,7 +196,6 @@ export async function saveCohort(_prev: CohortFormState, f: FormData): Promise<C
   }
 
   // Refresh the home page and the cohort's page straight away.
-  updateTag(COHORTS_TAG);
   revalidatePath("/");
   revalidatePath(`/c/${slug}`);
   if (oldSlug && oldSlug !== slug) revalidatePath(`/c/${oldSlug}`);
