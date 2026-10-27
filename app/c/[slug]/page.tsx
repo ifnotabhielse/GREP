@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Footer, Nav } from "@/components/chrome";
 import { PaceMini, STATUS_PILL, SessionLines, joinText, paceText, raceLine, startsText } from "@/components/cohort-card";
@@ -130,7 +131,7 @@ export default async function CohortPage({ params }: PageProps<"/c/[slug]">) {
             </div>
 
             <p className="cohort-note">
-              Not your pace or schedule? <a className="link" href="/#cohorts">See all cohorts ›</a>
+              Not your pace or schedule? <Link className="link" href="/#cohorts">See all cohorts ›</Link>
             </p>
             {isRace && (
               <p className="fine">

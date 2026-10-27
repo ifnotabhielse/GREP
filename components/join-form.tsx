@@ -72,6 +72,8 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
   const navigated = useRef(false);
 
   // ---------- Mount: months, draft, ?cohort= ----------
+  // Reads browser-only state (date, localStorage, URL) once after hydration, like the original page's script.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setMonths(upcomingMonths(15));
     const d = readDraft();
@@ -98,11 +100,11 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
       next.cohort = "";
       label = "";
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from browser-only state
     setV(next);
     setCohortLabel(label);
     setLoaded(true);
   }, [presets]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Save a draft in this browser as people type.
   useEffect(() => {
@@ -280,7 +282,8 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
   const distance = showsDistance(v.activity);
   const monthLabel = months.find((m) => m.value === v.month)?.label || "";
 
-  const review = () => {
+  const reviewSections = (() => {
+    if (current !== 4) return [];
     const phone = `+91 ${normPhone(v.phone)}`;
     const p = pace && v.pace.trim() ? (Number.isNaN(paceToSec(v.pace.trim())) ? v.pace.trim() : secToPace(paceToSec(v.pace.trim()))) + " /km" : "";
     const sections: { title: string; step: number; rows: [string, string][] }[] = [
@@ -307,11 +310,14 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
         ],
       },
     ];
-    return sections.map((sec) => (
+    return sections;
+  })();
+
+  const reviewNodes = reviewSections.map((sec) => (
       <div className="rv-sec" key={sec.title}>
         <div className="rv-head">
           <h4>{sec.title}</h4>
-          <button type="button" className="rv-edit" data-edit={sec.step} aria-label={`Edit ${sec.title.toLowerCase()}`} onClick={() => go(sec.step)}>
+          <button type="button" className="rv-edit" data-edit={sec.step} aria-label={`Edit ${sec.title.toLowerCase()}`}>
             Edit
           </button>
         </div>
@@ -327,7 +333,6 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
         </dl>
       </div>
     ));
-  };
 
   const progressText = current < 4 ? `Step ${current + 1} of 4 · ${STEP_NAMES[current]}` : current === 4 ? "Review" : "";
 
@@ -606,8 +611,15 @@ export function JoinForm({ presets }: { presets: CohortPreset[] }) {
         <div className="panel" data-panel="4" hidden={current !== 4}>
           <h3 tabIndex={-1}>Check your details</h3>
           <p className="panel-sub">Edit anything before you send it.</p>
-          <div className="review" id="review">
-            {current === 4 && review()}
+          <div
+            className="review"
+            id="review"
+            onClick={(e) => {
+              const b = (e.target as HTMLElement).closest<HTMLElement>("[data-edit]");
+              if (b) go(Number(b.dataset.edit));
+            }}
+          >
+            {reviewNodes}
           </div>
           <div className="panel-actions">
             <button type="button" className="btn btn-secondary" data-back onClick={() => go(Math.max(0, current - 1))}>

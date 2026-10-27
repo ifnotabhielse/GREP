@@ -64,6 +64,7 @@ describe("application constraints", () => {
     ["pace 2:59", { easy_pace_sec: 179 }],
     ["pace 12:01", { easy_pace_sec: 721 }],
     ["unknown day", { days: ["Mon", "Funday"] }],
+    ["unknown time slot", { times: ["midnight"] }],
     ["bad email", { email: "nope" }],
     ["web sign-up without email", { email: null }],
     ["bad level", { level: "Elite" }],
