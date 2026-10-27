@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LOGIN_EMAIL_COOKIE } from "@/lib/auth";
-import { changeLoginEmail, requestLoginLink, verifyLoginCode } from "../actions";
+import { changeLoginEmail, requestLoginLink } from "../actions";
 
 const MESSAGES: Record<string, { text: string; ok: boolean }> = {
   sent: { text: "If that email is on the admin list, we've emailed you a sign-in code. It expires within the hour.", ok: true },
@@ -27,7 +27,7 @@ async function LoginForms({ searchParams }: { searchParams: Promise<Record<strin
       )}
       {pending ? (
         <>
-          <form action={verifyLoginCode} className="fields">
+          <form method="post" action="/admin/verify" className="fields">
             <div className="field">
               <label htmlFor="admin-code">Code sent to {pending}</label>
               <input

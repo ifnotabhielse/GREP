@@ -7,7 +7,7 @@ import { supabaseServer } from "@/lib/supabase";
  * `?code=` (PKCE, the default) and `?token_hash=&type=` (custom email template).
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const nextParam = searchParams.get("next") || "/admin";
   const next = nextParam.startsWith("/admin") ? nextParam : "/admin";
   const supabase = await supabaseServer();
@@ -22,5 +22,6 @@ export async function GET(request: NextRequest) {
   } else if (tokenHash && type) {
     ok = !(await supabase.auth.verifyOtp({ token_hash: tokenHash, type })).error;
   }
-  return NextResponse.redirect(new URL(ok ? next : "/admin/login?error=link", origin));
+  // Relative redirect so the browser stays on the host it used.
+  return new NextResponse(null, { status: 303, headers: { Location: ok ? next : "/admin/login?error=link" } });
 }

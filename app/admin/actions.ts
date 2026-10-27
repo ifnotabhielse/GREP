@@ -36,25 +36,6 @@ export async function requestLoginLink(formData: FormData) {
   redirect("/admin/login?sent=1");
 }
 
-/** Checks the code from the email. Works in any browser, unlike the link. */
-export async function verifyLoginCode(formData: FormData) {
-  const store = await cookies();
-  const email = store.get(LOGIN_EMAIL_COOKIE)?.value || "";
-  // Pasted codes often carry spaces or line breaks; keep the digits only.
-  const code = String(formData.get("code") || "").replace(/\D/g, "");
-  if (!email) redirect("/admin/login");
-  if (!/^\d{6,10}$/.test(code) || !supabaseConfigured()) redirect("/admin/login?error=code");
-  const supabase = await supabaseServer();
-  const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: "email" });
-  if (error || !data.session) {
-    console.error("verifyLoginCode:", error?.code, error?.message);
-    redirect(`/admin/login?error=${error?.code === "otp_expired" ? "expired" : "code"}`);
-  }
-  if (!(await isAdminEmail(data.session.user.email || email))) redirect("/admin/login?error=notadmin");
-  store.delete({ name: LOGIN_EMAIL_COOKIE, path: "/admin" });
-  redirect("/admin");
-}
-
 export async function changeLoginEmail() {
   (await cookies()).delete({ name: LOGIN_EMAIL_COOKIE, path: "/admin" });
   redirect("/admin/login");
