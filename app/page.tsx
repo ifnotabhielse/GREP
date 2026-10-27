@@ -1,69 +1,55 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Footer, Nav } from "@/components/chrome";
+import { CohortGroups } from "@/components/cohort-card";
+import { JoinForm } from "@/components/join-form";
+import { Bento, Faq, Hero, HowItWorks, Statement } from "@/components/landing";
+import { getPublishedCohorts, toPreset } from "@/lib/cohorts";
 
-export default function Home() {
+export default async function Home() {
+  const cohorts = await getPublishedCohorts();
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      <Nav home />
+      <main id="top">
+        <Hero />
+        <Statement />
+        <HowItWorks />
+        <Bento />
+
+        <section className="cohorts" id="cohorts" aria-labelledby="cohorts-title">
+          <div className="wrap">
+            <p className="eyebrow">Cohorts · Hyderabad</p>
+            <h2 className="section-title" id="cohorts-title">
+              Pick your start line.
+            </h2>
+            <p className="section-lede">
+              Train in Hyderabad for India&apos;s big races, or toward a goal of your own. Cycling, HYROX and strength cohorts open as soon as enough
+              people sign up.
+            </p>
+            <CohortGroups cohorts={cohorts} />
+            <p className="cohort-note">Don&apos;t see your goal? Sign up anyway. We open a new cohort when enough people at your pace join.</p>
+            <p className="fine">
+              GREP isn&apos;t affiliated with these races. Book your race entry directly with each organiser. Race dates come from public announcements
+              and can change.
+            </p>
+          </div>
+        </section>
+
+        <section id="join" aria-labelledby="join-title">
+          <div className="wrap">
+            <div className="center">
+              <p className="eyebrow">Join</p>
+              <h2 className="section-title" id="join-title">
+                Join a cohort.
+              </h2>
+              <p className="section-lede">It takes about two minutes. We message you on WhatsApp once we have your match.</p>
+            </div>
+            <JoinForm presets={cohorts.map(toPreset)} />
+          </div>
+        </section>
+
+        <Faq />
       </main>
-    </div>
+      <Footer home />
+    </>
   );
 }

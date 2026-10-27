@@ -14,7 +14,6 @@ create extension if not exists citext;
 create type public.cohort_kind        as enum ('race', 'goal');
 create type public.cohort_status      as enum ('forming', 'waitlist', 'active', 'done');
 create type public.application_status as enum ('applied', 'placed', 'waitlist', 'declined');
-create type public.time_slot          as enum ('early_morning', 'morning', 'evening', 'late_evening');
 
 -- ---------- Admins (allowlist for /admin) ----------
 create table public.admins (
@@ -87,7 +86,8 @@ create table public.applications (
   devices             text[] not null default '{}',
   days                text[] not null default '{}'
                       check (days <@ array['Mon','Tue','Wed','Thu','Fri','Sat','Sun']),
-  times               public.time_slot[] not null default '{}',
+  times               text[] not null default '{}'
+                      check (times <@ array['early_morning','morning','evening','late_evening']),
   consent_at          timestamptz not null,
   consent_version     text not null,
   status              public.application_status not null default 'applied',
