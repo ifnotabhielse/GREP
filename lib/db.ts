@@ -17,7 +17,7 @@ function connect() {
   return postgres(url, {
     prepare: false,
     ssl: local ? false : "require",
-    max: local ? 5 : 1,
+    max: 1, // one per serverless instance; PGlite (local) is single-connection too
     idle_timeout: 20,
     connect_timeout: 15,
     transform: { undefined: null },

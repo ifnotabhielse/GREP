@@ -463,3 +463,22 @@ select.input{
 .cohort h3 a:hover{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:4px; }
 .consent a{ color:var(--accent); text-decoration:none; }
 .consent a:hover{ text-decoration:underline; }
+
+/* Cohort page (/c/[slug]) */
+.cohort-hero{ padding-block:clamp(56px,9vw,112px) clamp(72px,10vw,128px); }
+.cohort-detail{ max-width:720px; margin-top:48px; padding:clamp(20px,4vw,32px); }
+.cohort-detail .facts div{ grid-template-columns:110px minmax(0,1fr); }
+.cohort-actions{ display:grid; gap:12px; margin-top:8px; }
+.cohort-actions .share-note{ margin:0; text-align:center; }
+
+/* Text pages (/privacy, /terms) */
+.prose{ max-width:720px; }
+.prose h2{ margin:48px 0 12px; font-family:var(--font-display); font-size:clamp(22px,2.4vw,26px); font-weight:700; letter-spacing:-0.024em; line-height:1.15; }
+.prose p, .prose li{ color:var(--fg-2); }
+.prose p{ margin:0 0 14px; }
+.prose ul{ margin:0 0 14px; padding-left:22px; }
+.prose li{ margin-bottom:6px; }
+.prose strong{ color:var(--fg); font-weight:600; }
+.prose a{ color:var(--accent); text-decoration:none; }
+.prose a:hover{ text-decoration:underline; }
+.updated{ margin:18px 0 0; color:var(--fg-3); font-size:14px; }
