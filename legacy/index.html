@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GREP · Train with people at your pace</title>
+<meta name="description" content="GREP matches you with 3 to 6 people who train at your pace, toward the same goal, at times you can make. Now forming in Hyderabad.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GREP">
+<meta property="og:title" content="GREP · Find your 6 AM people.">
+<meta property="og:description" content="GREP matches you with 3 to 6 people who train at your pace, toward the same goal, at times you can make. Now forming in Hyderabad.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: Apple-style stacked full-width black bands, one centered 1080px column, glass sticky nav, bento tiles, one blue accent reserved for the pace band and actions. */
+:root{
+  color-scheme: dark;
+  --bg:#000000;
+  --band:#0b0b0c;
+  --surface:#161617;
+  --surface-2:#1d1d1f;
+  --surface-3:#2c2c2e;
+  --fg:#f5f5f7;
+  --fg-2:#a1a1a6;
+  --fg-3:#6e6e73;
+  --line:rgba(255,255,255,.10);
+  --line-strong:rgba(255,255,255,.22);
+  --accent:#2997ff;
+  --accent-2:#64d2ff;
+  --accent-soft:rgba(41,151,255,.16);
+  --accent-edge:rgba(41,151,255,.55);
+  --accent-glow:rgba(41,151,255,.28);
+  --btn:#0071e3;
+  --btn-hover:#0077ed;
+  --on-btn:#ffffff;
+  --nav-bg:rgba(0,0,0,.72);
+  --ok:#30d158;
+  --ok-soft:rgba(48,209,88,.14);
+  --err:#ff6961;
+  --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-text:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r-lg:28px;
+  --r-md:18px;
+  --r-sm:12px;
+  --col:1080px;
+  --gutter:16px;
+}
+@media (min-width:735px){ :root{ --gutter:28px; } }
+
+*,*::before,*::after{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+img{ max-width:100%; }
+:root{ padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+html{ scroll-behavior:smooth; background:var(--bg); }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-text);
+  font-size:17px;
+  line-height:1.47;
+  letter-spacing:-0.022em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0 0 auto;
+  height:env(safe-area-inset-top,0px);
+  z-index:30;
+  background:var(--bg);
+}
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+
+.wrap{
+  max-width:calc(var(--col) + 2 * var(--gutter));
+  margin-inline:auto;
+  padding-left:max(var(--gutter), env(safe-area-inset-left,0px));
+  padding-right:max(var(--gutter), env(safe-area-inset-right,0px));
+}
+section{ padding-block:clamp(72px,11vw,140px); }
+section[id]{ scroll-margin-top:52px; }
+
+/* ---------- Buttons & links ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:44px; padding:0 22px;
+  border-radius:980px; border:1px solid transparent;
+  font:inherit; font-size:17px; letter-spacing:-0.022em; line-height:1;
+  text-decoration:none; cursor:pointer;
+  transition:background-color .2s, border-color .2s, color .2s;
+}
+.btn-primary{ background:var(--btn); color:var(--on-btn); }
+.btn-primary:hover{ background:var(--btn-hover); }
+.btn-secondary{ background:transparent; color:var(--fg); border-color:var(--line-strong); }
+.btn-secondary:hover{ border-color:var(--fg-2); }
+.btn-lg{ min-height:52px; padding:0 28px; }
+.link{ color:var(--accent); text-decoration:none; font-size:17px; }
+.link:hover{ text-decoration:underline; }
+
+/* ---------- Nav ---------- */
+.nav{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+  background:var(--nav-bg);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--line);
+}
+.nav .wrap{ display:flex; align-items:center; justify-content:space-between; gap:16px; height:52px; }
+.brand{
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--fg); text-decoration:none;
+  font-family:var(--font-display); font-weight:600; font-size:19px; letter-spacing:-0.02em;
+}
+.brand .mark{ width:30px; height:30px; flex:none; color:var(--fg); }
+.wordmark{ font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.09em; }
+.footer .brand .mark{ width:24px; height:24px; }
+.footer .brand .wordmark{ font-size:14px; color:var(--fg); }
+.footer-left{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; }
+.nav-links{ display:flex; align-items:center; gap:28px; }
+.nav-links a:not(.btn){ color:var(--fg-2); text-decoration:none; font-size:14px; letter-spacing:-0.01em; }
+.nav-links a:not(.btn):hover{ color:var(--fg); }
+.nav .btn{ min-height:32px; padding:0 16px; font-size:14px; }
+@media (max-width:639px){ .nav-links a:not(.btn){ display:none; } }
+
+/* ---------- Type ---------- */
+.eyebrow{ margin:0 0 14px; font-size:17px; font-weight:600; color:var(--fg-2); letter-spacing:-0.01em; }
+.section-title{
+  margin:0; font-family:var(--font-display); font-weight:700;
+  font-size:clamp(36px,5.6vw,64px); line-height:1.05; letter-spacing:-0.032em;
+  text-wrap:balance;
+}
+.section-lede{ margin:18px 0 0; max-width:620px; color:var(--fg-2); font-size:clamp(19px,2vw,21px); line-height:1.42; letter-spacing:-0.016em; }
+.center{ text-align:center; }
+.center .section-lede{ margin-inline:auto; }
+
+/* ---------- Hero ---------- */
+.hero{ padding-block:clamp(56px,9vw,112px) clamp(72px,10vw,128px); text-align:center; }
+.hero-title{
+  margin:0; font-family:var(--font-display); font-weight:700;
+  font-size:clamp(44px,9.2vw,96px); line-height:1.02; letter-spacing:-0.038em;
+}
+.hero-title span{ display:block; }
+.grad{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.hero .lede{
+  margin:26px auto 0; max-width:640px;
+  color:var(--fg-2); font-size:clamp(19px,2.2vw,24px); line-height:1.38; letter-spacing:-0.016em;
+  text-wrap:balance;
+}
+.cta-row{ display:flex; flex-wrap:wrap; gap:16px 28px; align-items:center; justify-content:center; margin-top:36px; }
+
+/* Hero match card */
+.match{
+  max-width:600px; margin:clamp(48px,7vw,80px) auto 0; text-align:left;
+  background:linear-gradient(180deg,var(--surface-2),var(--surface));
+  border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:clamp(20px,4vw,32px);
+  box-shadow:0 50px 120px -50px var(--accent-glow);
+  animation:rise .9s cubic-bezier(.2,.7,.2,1) both;
+}
+.match-top{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; font-size:14px; color:var(--fg-2); }
+.tag{
+  display:inline-flex; align-items:center; padding:4px 10px; border-radius:980px;
+  border:1px solid var(--line-strong); color:var(--fg-2);
+  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+}
+.match-title{ margin:20px 0 4px; font-family:var(--font-display); font-size:clamp(24px,3.4vw,32px); font-weight:700; letter-spacing:-0.026em; line-height:1.1; }
+.match-sub{ margin:0; color:var(--fg-2); }
+
+.ruler{ margin-top:44px; }
+.ruler-track{ position:relative; height:72px; }
+.ruler-track::before{ content:""; position:absolute; left:0; right:0; top:44%; height:1px; background:var(--line-strong); }
+.ruler-track::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:6px;
+  background:repeating-linear-gradient(90deg,var(--line-strong) 0 1px,transparent 1px 20%);
+  border-right:1px solid var(--line-strong);
+}
+.band{
+  position:absolute; top:8px; bottom:8px;
+  border-radius:14px; background:var(--accent-soft); border:1px solid var(--accent-edge);
+  transform-origin:center;
+  animation:band-in 1.1s cubic-bezier(.2,.7,.2,1) .15s both;
+}
+.band-label{
+  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  font-size:13px; font-weight:600; color:var(--accent); white-space:nowrap; font-variant-numeric:tabular-nums;
+}
+.dot{
+  position:absolute; top:44%; width:10px; height:10px; margin:-5px 0 0 -5px;
+  border-radius:50%; background:var(--fg);
+  animation:dot-in .8s cubic-bezier(.2,.7,.2,1) both; animation-delay:var(--d,0s);
+}
+.dot.you{ width:14px; height:14px; margin:-7px 0 0 -7px; background:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
+.dot.you::after{
+  content:"You"; position:absolute; top:calc(100% + 5px); left:50%; transform:translateX(-50%);
+  font-size:12px; font-weight:600; color:var(--fg); letter-spacing:0;
+}
+.ticks{ position:relative; height:18px; margin-top:8px; font-size:12px; color:var(--fg-3); font-variant-numeric:tabular-nums; letter-spacing:0; }
+.ticks span{ position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
+.ticks span:first-child{ transform:none; }
+.ticks span:last-child{ transform:translateX(-100%); }
+.match-foot{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;
+  margin-top:28px; padding-top:20px; border-top:1px solid var(--line);
+}
+.match-foot div{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.match-foot b{ font-size:clamp(19px,2.4vw,22px); font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+.match-foot span{ font-size:12px; color:var(--fg-2); letter-spacing:0; }
+
+@keyframes rise{ from{ transform:translateY(16px); opacity:.6; } to{ transform:none; opacity:1; } }
+@keyframes band-in{ from{ transform:scaleX(.7); opacity:.5; } to{ transform:none; opacity:1; } }
+@keyframes dot-in{ from{ transform:translateY(8px); opacity:.4; } to{ transform:none; opacity:1; } }
+
+/* ---------- Statement ---------- */
+.statement{ padding-block:clamp(40px,7vw,96px); }
+.statement p{
+  margin:0; max-width:900px;
+  font-family:var(--font-display); font-weight:600;
+  font-size:clamp(30px,4.6vw,52px); line-height:1.12; letter-spacing:-0.03em;
+  color:var(--fg-3); text-wrap:balance;
+}
+.statement .hi{ color:var(--fg); }
+
+/* ---------- How it works ---------- */
+.steps{ list-style:none; margin:56px 0 0; padding:0; display:grid; grid-template-columns:1fr; gap:36px; }
+@media (min-width:820px){ .steps{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:40px; } }
+.steps li{ display:flex; flex-direction:column; gap:10px; padding-top:24px; border-top:1px solid var(--line-strong); min-width:0; }
+.step-num{ font-size:14px; font-weight:600; color:var(--accent); letter-spacing:-0.01em; }
+.steps h3{ margin:0; font-family:var(--font-display); font-size:clamp(22px,2.4vw,26px); font-weight:700; letter-spacing:-0.024em; line-height:1.15; }
+.steps p{ margin:0; color:var(--fg-2); }
+.after{ margin:40px 0 0; color:var(--fg-2); font-size:17px; }
+.after strong{ color:var(--fg); font-weight:600; }
+
+/* ---------- Bento ---------- */
+.bento{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:56px; }
+@media (min-width:720px){
+  .bento{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .t-group{ grid-column:span 2; }
+}
+@media (min-width:1024px){
+  .bento{ grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .t-pace,.t-goal{ grid-column:span 3; }
+  .t-sched,.t-area,.t-group{ grid-column:span 2; }
+}
+.tile{
+  display:flex; flex-direction:column; gap:12px; min-width:0;
+  background:var(--surface); border-radius:var(--r-lg);
+  padding:clamp(24px,3.4vw,40px);
+}
+.kicker{ margin:0; font-size:14px; font-weight:600; color:var(--fg-2); letter-spacing:-0.01em; }
+.tile h3{ margin:0; font-family:var(--font-display); font-size:clamp(24px,2.8vw,32px); line-height:1.1; font-weight:700; letter-spacing:-0.026em; text-wrap:balance; }
+.tile p{ margin:0; color:var(--fg-2); max-width:44ch; }
+.viz{ margin-top:auto; padding-top:24px; }
+
+.stat{ display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px; }
+.stat-num{ font-family:var(--font-display); font-size:clamp(64px,9vw,104px); font-weight:700; line-height:1; letter-spacing:-0.045em; font-variant-numeric:tabular-nums; }
+.stat-num small{ margin-left:4px; font-size:.38em; font-weight:600; color:var(--fg-2); letter-spacing:-0.02em; }
+.stat-cap{ max-width:24ch; color:var(--fg-2); font-size:15px; line-height:1.35; }
+
+.weeks{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:5px; align-items:end; height:72px; }
+.weeks span{ height:var(--h); border-radius:4px; background:var(--surface-3); }
+.weeks span.race{ background:var(--accent); }
+.weeks-labels{ display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:var(--fg-3); letter-spacing:0; }
+
+.slots{ display:flex; flex-wrap:wrap; gap:8px; }
+.slot{ padding:8px 14px; border-radius:980px; background:var(--surface-2); border:1px solid var(--line); font-size:15px; font-variant-numeric:tabular-nums; }
+.slot b{ font-weight:600; }
+
+.areas{ margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px 14px; color:var(--fg); font-size:15px; }
+.areas li{ display:inline-flex; align-items:center; gap:6px; }
+.areas li::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--fg-3); }
+
+.people{ display:flex; align-items:center; }
+.people span{ width:48px; height:48px; border-radius:50%; background:var(--surface-3); border:3px solid var(--surface); margin-left:-12px; }
+.people span:first-child{ margin-left:0; }
+.people span.me{ background:var(--accent); }
+.people em{ margin-left:16px; font-style:normal; color:var(--fg-2); font-size:15px; }
+
+/* ---------- Cohorts ---------- */
+.cohorts{ background:var(--band); }
+.cohort-grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:56px; }
+@media (min-width:900px){ .cohort-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.cohort{
+  display:flex; flex-direction:column; gap:16px; min-width:0;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:28px;
+}
+.cohort-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:var(--fg-2); }
+.pill{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:980px;
+  background:var(--ok-soft); color:var(--ok); font-size:12px; font-weight:600; letter-spacing:0;
+}
+.pill::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+.cohort h3{ margin:0; font-family:var(--font-display); font-size:28px; font-weight:700; letter-spacing:-0.026em; line-height:1.1; }
+.cohort-goal{ margin:-8px 0 0; color:var(--fg-2); }
+.mini{ display:flex; flex-direction:column; gap:6px; }
+.mini-track{ position:relative; height:8px; border-radius:4px; background:var(--surface-3); }
+.mini-band{ position:absolute; top:0; bottom:0; border-radius:4px; background:var(--accent); }
+.mini-labels{ display:flex; justify-content:space-between; font-size:12px; color:var(--fg-3); font-variant-numeric:tabular-nums; letter-spacing:0; }
+.facts{ margin:0; display:grid; gap:12px; flex:1; align-content:start; }
+.facts div{ display:grid; grid-template-columns:88px minmax(0,1fr); gap:12px; padding-top:12px; border-top:1px solid var(--line); }
+.facts dt{ color:var(--fg-2); font-size:14px; }
+.facts dd{ margin:0; font-size:15px; font-variant-numeric:tabular-nums; }
+.cohort .btn{ width:100%; }
+.cohort-note{ margin:40px 0 0; color:var(--fg-2); font-size:15px; }
+.fine{ margin:10px 0 0; max-width:70ch; color:var(--fg-3); font-size:13px; letter-spacing:-0.005em; }
+.group{ margin-top:64px; }
+.group-head{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 24px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+.group-title{ margin:0; font-family:var(--font-display); font-size:clamp(24px,2.6vw,28px); font-weight:700; letter-spacing:-0.024em; }
+.group-sub{ margin:0; color:var(--fg-2); font-size:15px; }
+.group .cohort-grid{ margin-top:24px; }
+@media (min-width:720px){ .cohort-grid.races{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.pill.wait{ background:var(--surface-3); color:var(--fg-2); }
+.dist{ display:flex; flex-wrap:wrap; gap:8px; }
+.dist span{ padding:6px 12px; border-radius:980px; background:var(--accent-soft); color:var(--accent); font-size:13px; font-weight:600; letter-spacing:0; font-variant-numeric:tabular-nums; }
+
+/* ---------- Join form ---------- */
+.join-card{
+  scroll-margin-top:68px;
+  max-width:720px; margin:48px auto 0;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:clamp(20px,4.5vw,48px);
+}
+.progress{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+.progress li{ display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--fg-3); letter-spacing:0; min-width:0; }
+.progress .bar{ height:4px; border-radius:2px; background:var(--surface-3); transition:background-color .3s; }
+.progress li.is-done .bar{ background:var(--accent); }
+.progress li.is-current .bar{ background:var(--accent-edge); }
+.progress li.is-current{ color:var(--fg); }
+.progress li.is-done{ color:var(--fg-2); }
+.progress-text{ margin:12px 0 0; font-size:13px; color:var(--fg-2); letter-spacing:0; }
+@media (max-width:599px){ .progress .lbl{ display:none; } }
+@media (min-width:600px){ .progress-text{ display:none; } }
+
+.joining{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin-top:20px; padding:10px 14px; border-radius:var(--r-sm);
+  background:var(--accent-soft); border:1px solid var(--accent-edge); font-size:14px;
+}
+.joining b{ font-weight:600; }
+.joining button{ background:none; border:0; color:var(--accent); font:inherit; font-size:14px; cursor:pointer; padding:6px 0; flex:none; }
+
+.panel h3{
+  margin:28px 0 6px; outline:none;
+  font-family:var(--font-display); font-size:clamp(26px,3.6vw,34px); font-weight:700; letter-spacing:-0.026em; line-height:1.1;
+}
+.panel-sub{ margin:0 0 28px; color:var(--fg-2); }
+.fields{ display:grid; grid-template-columns:1fr; gap:22px; }
+@media (min-width:600px){
+  .fields.two{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .span-2{ grid-column:span 2; }
+}
+.field{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+.field > label, .legend{ font-size:14px; font-weight:600; color:var(--fg); letter-spacing:-0.01em; }
+.opt{ color:var(--fg-3); font-weight:400; }
+.hint{ margin:0; font-size:13px; color:var(--fg-3); letter-spacing:-0.005em; }
+fieldset{ border:0; margin:0; padding:0; min-width:0; }
+legend{ padding:0; margin-bottom:10px; }
+
+.input{
+  width:100%; height:52px; padding:0 16px;
+  background:var(--surface-2); color:var(--fg);
+  border:1px solid var(--line-strong); border-radius:var(--r-sm);
+  font:inherit; font-size:17px; letter-spacing:-0.02em;
+  transition:border-color .15s, box-shadow .15s;
+  -webkit-appearance:none; appearance:none;
+}
+.input::placeholder{ color:var(--fg-3); }
+.input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+select.input{
+  padding-right:44px; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1a6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 18px center;
+}
+.input[aria-invalid="true"]{ border-color:var(--err); }
+.affix{ display:flex; align-items:stretch; min-width:0; }
+.affix .pfx, .affix .sfx{
+  display:flex; align-items:center; padding:0 14px; flex:none;
+  background:var(--surface-3); color:var(--fg-2); border:1px solid var(--line-strong); font-size:17px;
+}
+.affix .pfx{ border-right:0; border-radius:var(--r-sm) 0 0 var(--r-sm); }
+.affix .sfx{ border-left:0; border-radius:0 var(--r-sm) var(--r-sm) 0; }
+.affix .input{ flex:1; min-width:0; }
+.affix .pfx + .input{ border-radius:0 var(--r-sm) var(--r-sm) 0; }
+.affix .input:has(+ .sfx){ border-radius:var(--r-sm) 0 0 var(--r-sm); }
+
+.chips{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{
+  -webkit-appearance:none; appearance:none;
+  min-height:44px; padding:10px 16px;
+  background:transparent; color:var(--fg);
+  border:1px solid var(--line-strong); border-radius:980px;
+  font:inherit; font-size:15px; letter-spacing:-0.01em; line-height:1.2;
+  cursor:pointer; transition:background-color .15s, color .15s, border-color .15s;
+}
+.chip:hover{ border-color:var(--fg-2); }
+.chip[aria-pressed="true"]{ background:var(--fg); color:var(--bg); border-color:var(--fg); }
+.seg{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px;
+  padding:4px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line);
+}
+.seg .chip{ border:0; border-radius:10px; padding:10px 6px; text-align:center; }
+.seg .chip small{ display:block; margin-top:2px; font-size:12px; opacity:.62; letter-spacing:0; }
+.invalid .chip, .seg.invalid{ border-color:var(--err); }
+.err{ margin:0; color:var(--err); font-size:13px; letter-spacing:-0.005em; }
+.err:empty{ display:none; }
+
+.consent{ display:flex; align-items:flex-start; gap:12px; font-size:15px; color:var(--fg-2); cursor:pointer; }
+.consent input{ flex:none; width:22px; height:22px; margin:1px 0 0; accent-color:var(--accent); cursor:pointer; }
+
+.panel-actions{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-top:36px; }
+.panel-actions.end{ justify-content:flex-end; }
+
+.review{ display:grid; gap:14px; }
+.rv-sec{ background:var(--surface-2); border-radius:var(--r-md); padding:18px 20px 10px; }
+.rv-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; }
+.rv-head h4{ margin:0; font-size:17px; font-weight:600; }
+.rv-edit{ background:none; border:0; padding:6px 0; color:var(--accent); font:inherit; font-size:15px; cursor:pointer; }
+.rv-list{ margin:0; }
+.rv-row{ display:grid; grid-template-columns:minmax(0,40%) minmax(0,1fr); gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:15px; }
+.rv-row dt{ color:var(--fg-2); }
+.rv-row dd{ margin:0; overflow-wrap:anywhere; }
+
+.done{ text-align:center; padding-top:12px; }
+.done-mark{
+  width:64px; height:64px; margin:8px auto 0; border-radius:50%;
+  display:grid; place-items:center; background:var(--accent-soft); color:var(--accent);
+}
+.done-mark svg{ width:30px; height:30px; }
+.done h3{ margin-top:20px; }
+.done .panel-sub{ max-width:440px; margin-inline:auto; }
+.done .cta-row{ margin-top:8px; }
+.share-note{ margin:16px 0 0; font-size:14px; color:var(--fg-2); overflow-wrap:anywhere; }
+.share-note:empty{ display:none; }
+.submit-err{ margin-top:14px; text-align:right; }
+.hp{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+.btn[disabled]{ opacity:.6; cursor:progress; }
+
+/* ---------- FAQ ---------- */
+.faq{ max-width:780px; margin:48px 0 0; }
+.faq details{ border-top:1px solid var(--line-strong); }
+.faq details:last-child{ border-bottom:1px solid var(--line-strong); }
+.faq summary{
+  list-style:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:22px 0; font-size:clamp(19px,2.2vw,22px); font-weight:600; letter-spacing:-0.02em;
+}
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary::after{ content:"+"; flex:none; font-size:28px; font-weight:300; line-height:1; color:var(--fg-2); transition:transform .2s; }
+.faq details[open] summary::after{ transform:rotate(45deg); }
+.faq details p{ margin:0 0 24px; max-width:62ch; color:var(--fg-2); }
+
+/* ---------- Footer ---------- */
+.footer{ background:var(--surface); color:var(--fg-3); font-size:12px; letter-spacing:0; }
+.footer .wrap{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; padding-block:28px; }
+.footer nav{ display:flex; flex-wrap:wrap; gap:8px 20px; }
+.footer a{ color:var(--fg-2); text-decoration:none; }
+.footer a:hover{ color:var(--fg); }
+
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- GREP mark: a G drawn as a running track seen from above; the blue dot in the gap is you, joining the track. -->
+    <symbol id="g-mark" viewBox="0 0 32 32">
+      <path d="M20 8H12A8 8 0 0 0 12 24H20A8 8 0 0 0 28 16H21" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="25.66" cy="10.34" r="2.3" style="fill:var(--accent)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="GREP home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#g-mark"/></svg>
+      <span class="wordmark">GREP</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#cohorts">Cohorts</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="#join">Join</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <p class="eyebrow">Now forming in Hyderabad</p>
+      <h1 class="hero-title" id="hero-title">
+        <span>Find your</span>
+        <span class="grad">6 AM people.</span>
+      </h1>
+      <p class="lede">GREP puts you in a small group of 3 to 6 people who train at your level, toward the same target, at times you can actually make.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-lg" href="#join">Join a cohort</a>
+        <a class="link" href="#how">See how it works ›</a>
+      </div>
+
+      <div class="match" aria-label="Example of a GREP cohort">
+        <div class="match-top">
+          <span class="tag">Example match</span>
+          <span>Gachibowli · Tue, Thu, Sat · 6:00&nbsp;AM</span>
+        </div>
+        <h2 class="match-title">Half Marathon cohort</h2>
+        <p class="match-sub">Race in Feb 2027 · easy runs, one long run a week</p>
+
+        <div class="ruler" role="img" aria-label="Easy pace band from 6:30 to 7:15 per kilometre with five runners inside it, including you at 6:52">
+          <div class="ruler-track">
+            <div class="band" style="left:40%;width:30%"><span class="band-label">Easy pace 6:30–7:15 /km</span></div>
+            <span class="dot" style="left:42.7%;--d:.35s"></span>
+            <span class="dot" style="left:47.3%;--d:.45s"></span>
+            <span class="dot you" style="left:54.7%;--d:.55s"></span>
+            <span class="dot" style="left:62%;--d:.65s"></span>
+            <span class="dot" style="left:66.7%;--d:.75s"></span>
+          </div>
+          <div class="ticks" aria-hidden="true">
+            <span style="left:0">5:30</span>
+            <span style="left:20%">6:00</span>
+            <span style="left:40%">6:30</span>
+            <span style="left:60%">7:00</span>
+            <span style="left:80%">7:30</span>
+            <span style="left:100%">8:00</span>
+          </div>
+        </div>
+
+        <div class="match-foot">
+          <div><b>5</b><span>People</span></div>
+          <div><b>3 / week</b><span>Sessions</span></div>
+          <div><b>12</b><span>Weeks to race day</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statement -->
+  <section class="statement" aria-label="Why GREP">
+    <div class="wrap">
+      <p>Most training plans fall apart at 5:45&nbsp;AM, when nobody is waiting for you. <span class="hi">With GREP, four people are.</span></p>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 class="section-title" id="how-title">From sign-up to race day.</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-num">Step 1</span>
+          <h3>Tell us your goal</h3>
+          <p>Your next target, your current pace or training volume, and the slots you can train in.</p>
+        </li>
+        <li>
+          <span class="step-num">Step 2</span>
+          <h3>Get matched</h3>
+          <p>We place you in a cohort of 3 to 6 people at your pace, near you, on a schedule that works for everyone.</p>
+        </li>
+        <li>
+          <span class="step-num">Step 3</span>
+          <h3>Train to race day</h3>
+          <p>A fixed meeting point, a shared weekly plan and a group chat. People expect you there, so you show up.</p>
+        </li>
+      </ol>
+      <p class="after"><strong>After race day,</strong> set your next goal and we match you again.</p>
+    </div>
+  </section>
+
+  <!-- Matching bento -->
+  <section aria-labelledby="match-title" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">The match</p>
+      <h2 class="section-title" id="match-title">Matched on what matters.</h2>
+
+      <div class="bento">
+        <article class="tile t-pace">
+          <p class="kicker">Pace</p>
+          <h3>Grouped by your easy pace.</h3>
+          <p>Runners in a cohort sit inside one narrow pace band, so nobody waits and nobody chases.</p>
+          <div class="viz stat">
+            <span class="stat-num">45<small>sec</small></span>
+            <span class="stat-cap">Widest gap per km between runners in the same cohort.</span>
+          </div>
+        </article>
+
+        <article class="tile t-goal">
+          <p class="kicker">Goal</p>
+          <h3>Same target, same race day.</h3>
+          <p>Everyone trains toward one date, so one plan fits the whole group, recovery weeks included.</p>
+          <div class="viz" aria-label="A 12-week training block that builds, with lighter weeks 4, 8 and 11, ending on race day">
+            <div class="weeks" aria-hidden="true">
+              <span style="--h:28%"></span><span style="--h:36%"></span><span style="--h:44%"></span><span style="--h:30%"></span>
+              <span style="--h:50%"></span><span style="--h:58%"></span><span style="--h:66%"></span><span style="--h:44%"></span>
+              <span style="--h:74%"></span><span style="--h:84%"></span><span style="--h:54%"></span><span class="race" style="--h:100%"></span>
+            </div>
+            <div class="weeks-labels" aria-hidden="true"><span>Week 1</span><span>Race day</span></div>
+          </div>
+        </article>
+
+        <article class="tile t-sched">
+          <p class="kicker">Schedule</p>
+          <h3>Slots you can make.</h3>
+          <div class="viz slots" aria-label="Example slots">
+            <span class="slot"><b>Tue</b> 6:00&nbsp;AM</span>
+            <span class="slot"><b>Thu</b> 6:00&nbsp;AM</span>
+            <span class="slot"><b>Sat</b> 5:30&nbsp;AM</span>
+          </div>
+        </article>
+
+        <article class="tile t-area">
+          <p class="kicker">Area</p>
+          <h3>Close to home or work.</h3>
+          <ul class="viz areas" aria-label="Areas we're starting with">
+            <li>Gachibowli</li><li>Financial District</li><li>Kondapur</li><li>Madhapur</li><li>Jubilee Hills</li>
+          </ul>
+        </article>
+
+        <article class="tile t-group">
+          <p class="kicker">Group</p>
+          <h3>3 to 6 people.</h3>
+          <p>Small enough to know everyone. Big enough that the session still happens when someone skips.</p>
+          <div class="viz people" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span class="me"></span><em>and you</em>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cohorts -->
+  <section class="cohorts" id="cohorts" aria-labelledby="cohorts-title">
+    <div class="wrap">
+      <p class="eyebrow">Cohorts · Hyderabad</p>
+      <h2 class="section-title" id="cohorts-title">Pick your start line.</h2>
+      <p class="section-lede">Train in Hyderabad for India's big races, or toward a goal of your own. Cycling, HYROX and strength cohorts open as soon as enough people sign up.</p>
+
+      <div class="group">
+        <div class="group-head">
+          <h3 class="group-title">Race cohorts</h3>
+          <p class="group-sub">Train together here. Race together there.</p>
+        </div>
+        <div class="cohort-grid races">
+          <article class="cohort">
+            <div class="cohort-top"><span class="pill">Forming</span><span>11 weeks</span></div>
+            <h3>Tata Mumbai Marathon</h3>
+            <p class="cohort-goal">Mumbai · Sun, 17 Jan 2027</p>
+            <div class="dist" aria-label="Distances"><span>Full · 42.2 km</span><span>Half · 21.1 km</span></div>
+            <dl class="facts">
+              <div><dt>Training</dt><dd>Pace pods of 3 to 6, matched on easy pace</dd></div>
+              <div><dt>Area</dt><dd>Gachibowli and Financial District</dd></div>
+              <div><dt>Sessions</dt><dd>Tue and Thu, 5:45&nbsp;AM<br>Sun long run, 5:00&nbsp;AM</dd></div>
+              <div><dt>Starts</dt><dd>Mon, 2 Nov 2026</dd></div>
+            </dl>
+            <button type="button" class="btn btn-secondary cohort-join" data-cohort="Tata Mumbai Marathon 2027" data-activity="Running" data-target="Tata Mumbai Marathon, 17 Jan 2027" data-month="2027-01">Join this cohort</button>
+          </article>
+
+          <article class="cohort">
+            <div class="cohort-top"><span class="pill wait">Waitlist</span><span>10 weeks</span></div>
+            <h3>TCS World 10K</h3>
+            <p class="cohort-goal">Bengaluru · Sun, 25 Apr 2027</p>
+            <div class="dist" aria-label="Distance"><span>10 km</span></div>
+            <dl class="facts">
+              <div><dt>Training</dt><dd>Speed work and tempo runs, pods by 10K time</dd></div>
+              <div><dt>Area</dt><dd>Kondapur and Madhapur</dd></div>
+              <div><dt>Sessions</dt><dd>Mon and Wed, 6:00&nbsp;AM<br>Sat tempo run, 6:00&nbsp;AM</dd></div>
+              <div><dt>Starts</dt><dd>Mon, 15 Feb 2027</dd></div>
+            </dl>
+            <button type="button" class="btn btn-secondary cohort-join" data-cohort="TCS World 10K 2027" data-activity="Running" data-target="TCS World 10K Bengaluru, 25 Apr 2027" data-month="2027-04">Join the waitlist</button>
+          </article>
+
+          <article class="cohort">
+            <div class="cohort-top"><span class="pill wait">Waitlist</span><span>12 weeks</span></div>
+            <h3>Vedanta Delhi Half Marathon</h3>
+            <p class="cohort-goal">New Delhi · Oct 2027, date to be announced</p>
+            <div class="dist" aria-label="Distance"><span>Half · 21.1 km</span></div>
+            <dl class="facts">
+              <div><dt>Training</dt><dd>Pace pods of 3 to 6, matched on easy pace</dd></div>
+              <div><dt>Area</dt><dd>Gachibowli and Financial District</dd></div>
+              <div><dt>Sessions</dt><dd>Tue and Thu, 6:00&nbsp;AM<br>Sat long run, 5:30&nbsp;AM</dd></div>
+              <div><dt>Starts</dt><dd>July 2027</dd></div>
+            </dl>
+            <button type="button" class="btn btn-secondary cohort-join" data-cohort="Vedanta Delhi Half Marathon 2027" data-activity="Running" data-target="Vedanta Delhi Half Marathon, Oct 2027" data-month="2027-10">Join the waitlist</button>
+          </article>
+
+          <article class="cohort">
+            <div class="cohort-top"><span class="pill wait">Waitlist</span><span>26 weeks</span></div>
+            <h3>IRONMAN 70.3 Goa</h3>
+            <p class="cohort-goal">Panaji · Late Oct 2027</p>
+            <div class="dist" aria-label="Distances"><span>Swim 1.9 km</span><span>Bike 90 km</span><span>Run 21.1 km</span></div>
+            <dl class="facts">
+              <div><dt>Training</dt><dd>Swim, bike and run blocks, pods by bike and run pace</dd></div>
+              <div><dt>Area</dt><dd>Gachibowli for swim and run, Gandipet loop for rides</dd></div>
+              <div><dt>Sessions</dt><dd>Swim Tue and run Thu, 6:00&nbsp;AM<br>Sun long ride, 5:30&nbsp;AM</dd></div>
+              <div><dt>Starts</dt><dd>April 2027</dd></div>
+            </dl>
+            <button type="button" class="btn btn-secondary cohort-join" data-cohort="IRONMAN 70.3 Goa 2027" data-activity="Triathlon" data-target="IRONMAN 70.3 Goa, Oct 2027" data-month="2027-10">Join the waitlist</button>
+          </article>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-head">
+          <h3 class="group-title">Goal cohorts</h3>
+          <p class="group-sub">No race needed. Just a target and a date.</p>
+        </div>
+      <div class="cohort-grid">
+        <article class="cohort">
+          <div class="cohort-top"><span class="pill">Forming</span><span>12 weeks</span></div>
+          <h3>Half Marathon</h3>
+          <p class="cohort-goal">Race in Feb 2027</p>
+          <div class="mini" role="img" aria-label="Easy pace band 6:30 to 7:15 per km on a scale from 5:30 to 9:00">
+            <div class="mini-track"><span class="mini-band" style="left:28.57%;width:21.43%"></span></div>
+            <div class="mini-labels" aria-hidden="true"><span>5:30</span><span>9:00 /km</span></div>
+          </div>
+          <dl class="facts">
+            <div><dt>Easy pace</dt><dd>6:30–7:15 /km</dd></div>
+            <div><dt>Area</dt><dd>Gachibowli and Financial District</dd></div>
+            <div><dt>Sessions</dt><dd>Tue and Thu, 6:00&nbsp;AM<br>Sat long run, 5:30&nbsp;AM</dd></div>
+            <div><dt>Starts</dt><dd>Mon, 16 Nov 2026</dd></div>
+          </dl>
+          <button type="button" class="btn btn-secondary cohort-join" data-cohort="Half Marathon · Gachibowli" data-activity="Running" data-target="Half marathon in Feb 2027" data-month="2027-02">Join this cohort</button>
+        </article>
+
+        <article class="cohort">
+          <div class="cohort-top"><span class="pill">Forming</span><span>8 weeks</span></div>
+          <h3>First 10K</h3>
+          <p class="cohort-goal">Run 10K without stopping</p>
+          <div class="mini" role="img" aria-label="Easy pace band 7:30 to 8:30 per km on a scale from 5:30 to 9:00">
+            <div class="mini-track"><span class="mini-band" style="left:57.14%;width:28.57%"></span></div>
+            <div class="mini-labels" aria-hidden="true"><span>5:30</span><span>9:00 /km</span></div>
+          </div>
+          <dl class="facts">
+            <div><dt>Easy pace</dt><dd>7:30–8:30 /km</dd></div>
+            <div><dt>Area</dt><dd>Jubilee Hills, KBR Park</dd></div>
+            <div><dt>Sessions</dt><dd>Mon and Wed, 6:30&nbsp;AM<br>Sun, 6:00&nbsp;AM</dd></div>
+            <div><dt>Starts</dt><dd>Mon, 23 Nov 2026</dd></div>
+          </dl>
+          <button type="button" class="btn btn-secondary cohort-join" data-cohort="First 10K · Jubilee Hills" data-activity="Running" data-target="Run 10K without stopping">Join this cohort</button>
+        </article>
+
+        <article class="cohort">
+          <div class="cohort-top"><span class="pill">Forming</span><span>10 weeks</span></div>
+          <h3>Zone 2 Base</h3>
+          <p class="cohort-goal">Build an aerobic base</p>
+          <div class="mini" role="img" aria-label="Easy pace band 7:00 to 8:00 per km on a scale from 5:30 to 9:00">
+            <div class="mini-track"><span class="mini-band" style="left:42.86%;width:28.57%"></span></div>
+            <div class="mini-labels" aria-hidden="true"><span>5:30</span><span>9:00 /km</span></div>
+          </div>
+          <dl class="facts">
+            <div><dt>Easy pace</dt><dd>7:00–8:00 /km, heart rate in Zone 2</dd></div>
+            <div><dt>Area</dt><dd>Necklace Road</dd></div>
+            <div><dt>Sessions</dt><dd>Wed and Sat, 6:00&nbsp;AM</dd></div>
+            <div><dt>Starts</dt><dd>Wed, 2 Dec 2026</dd></div>
+          </dl>
+          <button type="button" class="btn btn-secondary cohort-join" data-cohort="Zone 2 Base · Necklace Road" data-activity="Running" data-target="Build an aerobic base in Zone 2">Join this cohort</button>
+        </article>
+      </div>
+      </div>
+      <p class="cohort-note">Don't see your goal? Sign up anyway. We open a new cohort when enough people at your pace join.</p>
+      <p class="fine">GREP isn't affiliated with these races. Book your race entry directly with each organiser. Race dates come from public announcements and can change.</p>
+    </div>
+  </section>
+
+  <!-- Join -->
+  <section id="join" aria-labelledby="join-title">
+    <div class="wrap">
+      <div class="center">
+        <p class="eyebrow">Join</p>
+        <h2 class="section-title" id="join-title">Join a cohort.</h2>
+        <p class="section-lede">It takes about two minutes. We message you on WhatsApp once we have your match.</p>
+      </div>
+
+      <div class="join-card" id="join-card">
+        <div class="progress-wrap">
+          <ol class="progress" aria-label="Form progress">
+            <li class="is-current"><span class="bar"></span><span class="lbl">About you</span></li>
+            <li><span class="bar"></span><span class="lbl">Your goal</span></li>
+            <li><span class="bar"></span><span class="lbl">Where you are now</span></li>
+            <li><span class="bar"></span><span class="lbl">When you can train</span></li>
+          </ol>
+          <p class="progress-text" id="progress-text" aria-live="polite">Step 1 of 4 · About you</p>
+        </div>
+
+        <div class="joining" id="joining" hidden>
+          <span>Joining <b id="joining-name"></b></span>
+          <button type="button" id="joining-clear">Remove</button>
+        </div>
+
+        <form id="join-form" name="grep-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="grep-signup">
+          <p class="hp" aria-hidden="true"><label for="f-bot">Leave this field empty</label><input id="f-bot" name="bot-field" type="text" tabindex="-1" autocomplete="off"></p>
+          <!-- Step 1 -->
+          <div class="panel" data-panel="0">
+            <h3 tabindex="-1">About you</h3>
+            <p class="panel-sub">So we can find people near you.</p>
+            <div class="fields two">
+              <div class="field span-2">
+                <label for="f-name">Full name</label>
+                <input class="input" id="f-name" name="name" type="text" autocomplete="name" placeholder="Your name">
+                <p class="err" id="err-f-name" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="f-age">Age</label>
+                <input class="input" id="f-age" name="age" type="number" inputmode="numeric" min="18" max="80" placeholder="27">
+                <p class="err" id="err-f-age" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="f-city">City</label>
+                <select class="input" id="f-city" name="city">
+                  <option>Hyderabad</option>
+                  <option>Bengaluru</option>
+                  <option>Mumbai</option>
+                  <option>Pune</option>
+                  <option>Delhi NCR</option>
+                  <option>Chennai</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field span-2" id="wrap-city-other" hidden>
+                <label for="f-city-other">Your city</label>
+                <input class="input" id="f-city-other" type="text" autocomplete="address-level2" placeholder="Kolkata">
+                <p class="err" id="err-f-city-other" aria-live="polite"></p>
+              </div>
+              <div class="field span-2">
+                <label for="f-area">Area</label>
+                <input class="input" id="f-area" name="area" type="text" list="areas" autocomplete="off" placeholder="Gachibowli">
+                <datalist id="areas">
+                  <option value="Gachibowli"></option><option value="Financial District"></option><option value="Nanakramguda"></option>
+                  <option value="Kondapur"></option><option value="Madhapur"></option><option value="HITEC City"></option>
+                  <option value="Kokapet"></option><option value="Manikonda"></option><option value="Jubilee Hills"></option>
+                  <option value="Banjara Hills"></option><option value="Kukatpally"></option><option value="Miyapur"></option>
+                  <option value="Begumpet"></option><option value="Secunderabad"></option><option value="Tolichowki"></option>
+                </datalist>
+                <p class="hint">We pick a meeting point near here.</p>
+                <p class="err" id="err-f-area" aria-live="polite"></p>
+              </div>
+              <div class="field span-2">
+                <label for="f-phone">WhatsApp number</label>
+                <div class="affix">
+                  <span class="pfx" aria-hidden="true">+91</span>
+                  <input class="input" id="f-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" placeholder="98765 43210">
+                </div>
+                <p class="err" id="err-f-phone" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="panel-actions end">
+              <button type="button" class="btn btn-primary" data-next>Continue</button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="panel" data-panel="1" hidden>
+            <h3 tabindex="-1">Your goal</h3>
+            <p class="panel-sub">What you're training for next.</p>
+            <div class="fields">
+              <fieldset class="field">
+                <legend class="legend">Activity</legend>
+                <div class="chips" data-group="activity" id="g-activity">
+                  <button type="button" class="chip" data-value="Running" aria-pressed="false">Running</button>
+                  <button type="button" class="chip" data-value="Cycling" aria-pressed="false">Cycling</button>
+                  <button type="button" class="chip" data-value="Strength / Gym" aria-pressed="false">Strength / Gym</button>
+                  <button type="button" class="chip" data-value="HYROX" aria-pressed="false">HYROX</button>
+                  <button type="button" class="chip" data-value="Triathlon" aria-pressed="false">Triathlon</button>
+                  <button type="button" class="chip" data-value="Swimming" aria-pressed="false">Swimming</button>
+                  <button type="button" class="chip" data-value="Tennis / Squash" aria-pressed="false">Tennis / Squash</button>
+                </div>
+                <p class="err" id="err-activity" aria-live="polite"></p>
+                <input type="hidden" name="activity">
+              </fieldset>
+              <div class="field">
+                <label for="f-target">Next target</label>
+                <input class="input" id="f-target" name="target" type="text" autocomplete="off" placeholder="Half marathon under 2:30">
+                <p class="hint">A race, a distance or a number. The more specific, the better the match.</p>
+                <p class="err" id="err-f-target" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="f-month">Target date <span class="opt">(optional)</span></label>
+                <select class="input" id="f-month" name="month">
+                  <option value="">No date yet</option>
+                </select>
+              </div>
+              <input type="hidden" name="cohort">
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="btn btn-secondary" data-back>Back</button>
+              <button type="button" class="btn btn-primary" data-next>Continue</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="panel" data-panel="2" hidden>
+            <h3 tabindex="-1">Where you are now</h3>
+            <p class="panel-sub">Rough numbers are fine. They decide who you're matched with.</p>
+            <div class="fields two">
+              <fieldset class="field span-2">
+                <legend class="legend">Level</legend>
+                <div class="seg" data-group="level" id="g-level">
+                  <button type="button" class="chip" data-value="Starting out" aria-pressed="false">Starting out<small>New or returning</small></button>
+                  <button type="button" class="chip" data-value="Consistent" aria-pressed="false">Consistent<small>Training most weeks</small></button>
+                  <button type="button" class="chip" data-value="Competitive" aria-pressed="false">Competitive<small>Racing for times</small></button>
+                </div>
+                <p class="err" id="err-level" aria-live="polite"></p>
+                <input type="hidden" name="level">
+              </fieldset>
+              <fieldset class="field span-2">
+                <legend class="legend">Sessions per week right now</legend>
+                <div class="seg" data-group="sessions" id="g-sessions">
+                  <button type="button" class="chip" data-value="1–2" aria-pressed="false">1–2</button>
+                  <button type="button" class="chip" data-value="3–4" aria-pressed="false">3–4</button>
+                  <button type="button" class="chip" data-value="5+" aria-pressed="false">5+</button>
+                </div>
+                <p class="err" id="err-sessions" aria-live="polite"></p>
+                <input type="hidden" name="sessions">
+              </fieldset>
+              <div class="field" id="wrap-pace" hidden>
+                <label for="f-pace">Easy pace <span class="opt">(optional)</span></label>
+                <div class="affix">
+                  <input class="input" id="f-pace" name="pace" type="text" inputmode="decimal" autocomplete="off" placeholder="6:45">
+                  <span class="sfx" aria-hidden="true">/km</span>
+                </div>
+                <p class="hint">A pace you can hold while talking.</p>
+                <p class="err" id="err-f-pace" aria-live="polite"></p>
+              </div>
+              <div class="field" id="wrap-distance" hidden>
+                <label for="f-distance">Weekly distance <span class="opt">(optional)</span></label>
+                <div class="affix">
+                  <input class="input" id="f-distance" name="distance" type="number" inputmode="decimal" min="0" max="1000" placeholder="20">
+                  <span class="sfx" aria-hidden="true">km</span>
+                </div>
+                <p class="hint">Average over the last 4 weeks.</p>
+                <p class="err" id="err-f-distance" aria-live="polite"></p>
+              </div>
+              <div class="field span-2">
+                <label for="f-best">Recent best <span class="opt">(optional)</span></label>
+                <input class="input" id="f-best" name="best" type="text" autocomplete="off" placeholder="10K in 58:30">
+              </div>
+              <fieldset class="field span-2">
+                <legend class="legend">What you track with <span class="opt">(optional)</span></legend>
+                <div class="chips" data-group="devices" data-multi="true" id="g-devices">
+                  <button type="button" class="chip" data-value="Apple Watch" aria-pressed="false">Apple Watch</button>
+                  <button type="button" class="chip" data-value="Garmin" aria-pressed="false">Garmin</button>
+                  <button type="button" class="chip" data-value="WHOOP" aria-pressed="false">WHOOP</button>
+                  <button type="button" class="chip" data-value="Strava" aria-pressed="false">Strava</button>
+                  <button type="button" class="chip" data-value="Fitbit" aria-pressed="false">Fitbit</button>
+                  <button type="button" class="chip" data-value="Nothing" aria-pressed="false">Nothing yet</button>
+                </div>
+                <input type="hidden" name="devices">
+              </fieldset>
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="btn btn-secondary" data-back>Back</button>
+              <button type="button" class="btn btn-primary" data-next>Continue</button>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="panel" data-panel="3" hidden>
+            <h3 tabindex="-1">When you can train</h3>
+            <p class="panel-sub">Pick every slot that works. More slots means a faster match.</p>
+            <div class="fields">
+              <fieldset class="field">
+                <legend class="legend">Days</legend>
+                <div class="chips" data-group="days" data-multi="true" id="g-days">
+                  <button type="button" class="chip" data-value="Mon" aria-pressed="false">Mon</button>
+                  <button type="button" class="chip" data-value="Tue" aria-pressed="false">Tue</button>
+                  <button type="button" class="chip" data-value="Wed" aria-pressed="false">Wed</button>
+                  <button type="button" class="chip" data-value="Thu" aria-pressed="false">Thu</button>
+                  <button type="button" class="chip" data-value="Fri" aria-pressed="false">Fri</button>
+                  <button type="button" class="chip" data-value="Sat" aria-pressed="false">Sat</button>
+                  <button type="button" class="chip" data-value="Sun" aria-pressed="false">Sun</button>
+                </div>
+                <p class="err" id="err-days" aria-live="polite"></p>
+                <input type="hidden" name="days">
+              </fieldset>
+              <fieldset class="field">
+                <legend class="legend">Times</legend>
+                <div class="chips" data-group="times" data-multi="true" id="g-times">
+                  <button type="button" class="chip" data-value="Early morning (5–7 AM)" aria-pressed="false">Early morning · 5–7 AM</button>
+                  <button type="button" class="chip" data-value="Morning (7–9 AM)" aria-pressed="false">Morning · 7–9 AM</button>
+                  <button type="button" class="chip" data-value="Evening (6–8 PM)" aria-pressed="false">Evening · 6–8 PM</button>
+                  <button type="button" class="chip" data-value="Late evening (8–10 PM)" aria-pressed="false">Late evening · 8–10 PM</button>
+                </div>
+                <p class="err" id="err-times" aria-live="polite"></p>
+                <input type="hidden" name="times">
+              </fieldset>
+              <div class="field">
+                <label class="consent" for="f-consent">
+                  <input type="checkbox" id="f-consent" name="consent">
+                  <span>I'm 18 or older, and GREP can contact me on WhatsApp about cohorts.</span>
+                </label>
+                <p class="err" id="err-f-consent" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="btn btn-secondary" data-back>Back</button>
+              <button type="button" class="btn btn-primary" data-next>Review</button>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div class="panel" data-panel="4" hidden>
+            <h3 tabindex="-1">Check your details</h3>
+            <p class="panel-sub">Edit anything before you send it.</p>
+            <div class="review" id="review"></div>
+            <div class="panel-actions">
+              <button type="button" class="btn btn-secondary" data-back>Back</button>
+              <button type="submit" class="btn btn-primary" id="submit-btn">Submit application</button>
+            </div>
+            <p class="err submit-err" id="err-submit" aria-live="polite"></p>
+          </div>
+
+          <!-- Done -->
+          <div class="panel done" data-panel="5" hidden>
+            <div class="done-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            </div>
+            <h3 tabindex="-1" id="done-title">You're in.</h3>
+            <p class="panel-sub" id="done-sub">We'll message you on WhatsApp once we have your match.</p>
+            <div class="cta-row">
+              <button type="button" class="btn btn-primary" id="share-btn">Invite a training partner</button>
+            </div>
+            <p class="share-note" id="share-note" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-title" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">Questions</p>
+      <h2 class="section-title" id="faq-title">Good to know.</h2>
+      <div class="faq">
+        <details>
+          <summary>What if there's no cohort for my goal yet?</summary>
+          <p>Sign up anyway. We keep your details and open a cohort once enough people at your pace, in your area, want the same thing.</p>
+        </details>
+        <details>
+          <summary>Do I need a smartwatch?</summary>
+          <p>No. A rough idea of your pace or weekly training is enough. If you use Apple Watch, Garmin, WHOOP or Strava, your numbers make the match more accurate.</p>
+        </details>
+        <details>
+          <summary>How do cohorts meet?</summary>
+          <p>In person, at a fixed meeting point, on the agreed days. Each cohort also gets a WhatsApp group and a shared weekly plan.</p>
+        </details>
+        <details>
+          <summary>Who can join?</summary>
+          <p>Anyone 18 or older. The first cohorts are in Hyderabad. Other cities open when enough people there sign up.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-left">
+      <a class="brand" href="#top" aria-label="GREP home">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#g-mark"/></svg>
+        <span class="wordmark">GREP</span>
+      </a>
+      <span>© 2026 GREP · Built in Hyderabad</span>
+    </div>
+    <nav aria-label="Footer">
+      <a href="#how">How it works</a>
+      <a href="#cohorts">Cohorts</a>
+      <a href="#join">Join</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var FORM_NAME = "grep-signup";
+  var DRAFT_KEY = "grep-draft-v1";
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var form = $("#join-form");
+  var panels = $$(".panel", form);
+  var progressItems = $$(".progress li");
+  var progressText = $("#progress-text");
+  var STEP_NAMES = ["About you", "Your goal", "Where you are now", "When you can train"];
+  var DAY_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  var TIME_ORDER = ["Early morning (5–7 AM)", "Morning (7–9 AM)", "Evening (6–8 PM)", "Late evening (8–10 PM)"];
+  var PLACEHOLDERS = {
+    "Running": "Half marathon under 2:30",
+    "Cycling": "100 km ride in one day",
+    "Strength / Gym": "Bench press 80 kg",
+    "HYROX": "First HYROX doubles race",
+    "Triathlon": "Olympic-distance triathlon",
+    "Swimming": "1.5 km open-water swim",
+    "Tennis / Squash": "Play 3 matches a week"
+  };
+  var FIELDS = ["f-name", "f-age", "f-city", "f-city-other", "f-area", "f-phone", "f-target", "f-month", "f-pace", "f-distance", "f-best"];
+
+  var state = { activity: "", level: "", sessions: "", devices: [], days: [], times: [], cohort: "" };
+  var current = 0;
+  var sending = false;
+  var lastPreset = { target: "", month: "" };
+
+  function val(id) { var el = document.getElementById(id); return el ? String(el.value || "").trim() : ""; }
+  function normPhone(s) {
+    var d = String(s).replace(/\D/g, "");
+    if (d.length === 12 && d.indexOf("91") === 0) d = d.slice(2);
+    if (d.length === 11 && d.charAt(0) === "0") d = d.slice(1);
+    return d;
+  }
+  function paceToSec(s) {
+    var m = /^(\d{1,2})[:.]([0-5]\d)$/.exec(s);
+    return m ? Number(m[1]) * 60 + Number(m[2]) : NaN;
+  }
+  function fmtPace(s) {
+    var sec = paceToSec(s);
+    if (isNaN(sec)) return s;
+    return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+  }
+
+  // Target months: this month plus the next 14
+  (function fillMonths() {
+    var sel = $("#f-month");
+    var now = new Date();
+    var fmt = new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric" });
+    for (var i = 0; i < 15; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      var opt = document.createElement("option");
+      opt.value = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      opt.textContent = fmt.format(d);
+      sel.appendChild(opt);
+    }
+  })();
+
+  // ---------- Chips ----------
+  function syncChips() {
+    $$("[data-group]", form).forEach(function (group) {
+      var v = state[group.dataset.group];
+      $$("button[data-value]", group).forEach(function (b) {
+        var on = Array.isArray(v) ? v.indexOf(b.dataset.value) >= 0 : v === b.dataset.value;
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    });
+  }
+  $$("[data-group]", form).forEach(function (group) {
+    var key = group.dataset.group;
+    var multi = group.dataset.multi === "true";
+    group.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-value]");
+      if (!btn) return;
+      var v = btn.dataset.value;
+      if (multi) {
+        var arr = state[key].slice();
+        var i = arr.indexOf(v);
+        if (i >= 0) arr.splice(i, 1); else arr.push(v);
+        if (key === "devices") {
+          if (v === "Nothing" && i < 0) arr = ["Nothing"];
+          else arr = arr.filter(function (x) { return x !== "Nothing"; });
+        }
+        state[key] = arr;
+      } else {
+        state[key] = v;
+      }
+      syncChips();
+      clearError(key);
+      if (key === "activity") applyActivity();
+      saveDraft();
+    });
+  });
+
+  function applyActivity() {
+    var a = state.activity;
+    $("#f-target").placeholder = PLACEHOLDERS[a] || PLACEHOLDERS.Running;
+    $("#wrap-pace").hidden = !(a === "Running" || a === "Triathlon");
+    $("#wrap-distance").hidden = !(a === "Running" || a === "Cycling" || a === "Triathlon");
+  }
+
+  $("#f-city").addEventListener("change", function () {
+    $("#wrap-city-other").hidden = $("#f-city").value !== "Other";
+  });
+
+  // ---------- Errors ----------
+  function clearError(key) {
+    var err = document.getElementById("err-" + key);
+    if (err) err.textContent = "";
+    var input = document.getElementById(key);
+    if (input) input.removeAttribute("aria-invalid");
+    var group = document.getElementById("g-" + key);
+    if (group) group.classList.remove("invalid");
+  }
+  function showErrors(list) {
+    list.forEach(function (pair) {
+      var key = pair[0];
+      var err = document.getElementById("err-" + key);
+      if (err) err.textContent = pair[1];
+      var input = document.getElementById(key);
+      if (input) input.setAttribute("aria-invalid", "true");
+      var group = document.getElementById("g-" + key);
+      if (group) group.classList.add("invalid");
+    });
+    var first = list[0][0];
+    var target = document.getElementById(first) || $("#g-" + first + " button");
+    if (target) target.focus();
+  }
+  form.addEventListener("input", function (e) {
+    if (e.target && e.target.id) clearError(e.target.id);
+    saveDraft();
+  });
+  form.addEventListener("change", function (e) {
+    if (e.target && e.target.id) clearError(e.target.id);
+    saveDraft();
+  });
+
+  // ---------- Validation ----------
+  var VALIDATORS = [
+    function () {
+      var e = [];
+      if (val("f-name").length < 2) e.push(["f-name", "Enter your name."]);
+      var age = Number(val("f-age"));
+      if (!val("f-age") || !Number.isInteger(age) || age < 18 || age > 80) e.push(["f-age", "Enter an age from 18 to 80. Cohorts are for adults."]);
+      if ($("#f-city").value === "Other" && val("f-city-other").length < 2) e.push(["f-city-other", "Enter your city."]);
+      if (val("f-area").length < 2) e.push(["f-area", "Enter your area so we can pick a meeting point near you."]);
+      if (!/^[6-9]\d{9}$/.test(normPhone(val("f-phone")))) e.push(["f-phone", "Enter a 10-digit Indian mobile number."]);
+      return e;
+    },
+    function () {
+      var e = [];
+      if (!state.activity) e.push(["activity", "Pick the activity you're training for."]);
+      if (val("f-target").length < 3) e.push(["f-target", "Describe your next target, like a race or a number."]);
+      return e;
+    },
+    function () {
+      var e = [];
+      if (!state.level) e.push(["level", "Pick the level closest to you."]);
+      if (!state.sessions) e.push(["sessions", "Pick how often you train now."]);
+      var p = val("f-pace");
+      if (!$("#wrap-pace").hidden && p) {
+        var s = paceToSec(p);
+        if (!(s >= 180 && s <= 720)) e.push(["f-pace", "Use minutes and seconds per km, like 6:45."]);
+      }
+      var d = val("f-distance");
+      if (!$("#wrap-distance").hidden && d && !(Number(d) >= 0 && Number(d) <= 1000)) e.push(["f-distance", "Enter weekly distance in km, like 20."]);
+      return e;
+    },
+    function () {
+      var e = [];
+      if (!state.days.length) e.push(["days", "Pick at least one day."]);
+      if (!state.times.length) e.push(["times", "Pick at least one time slot."]);
+      if (!$("#f-consent").checked) e.push(["f-consent", "Tick this box to continue."]);
+      return e;
+    }
+  ];
+
+  // ---------- Navigation ----------
+  function go(i) {
+    current = i;
+    renderCohort();
+    panels.forEach(function (p, idx) { p.hidden = idx !== i; });
+    progressItems.forEach(function (li, idx) {
+      li.classList.toggle("is-done", idx < i);
+      li.classList.toggle("is-current", idx === i);
+    });
+    if (i < 4) progressText.textContent = "Step " + (i + 1) + " of 4 · " + STEP_NAMES[i];
+    else if (i === 4) progressText.textContent = "Review";
+    $(".progress-wrap").hidden = i === 5;
+    if (i === 4) renderReview();
+    var card = $("#join-card");
+    if (card.getBoundingClientRect().top < 60) card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    var h = $("h3", panels[i]);
+    if (h) h.focus({ preventScroll: true });
+  }
+
+  form.addEventListener("click", function (e) {
+    var next = e.target.closest("[data-next]");
+    var back = e.target.closest("[data-back]");
+    var edit = e.target.closest("[data-edit]");
+    if (next) {
+      var errs = VALIDATORS[current]();
+      if (errs.length) { showErrors(errs); return; }
+      go(current + 1);
+    } else if (back) {
+      go(Math.max(0, current - 1));
+    } else if (edit) {
+      go(Number(edit.dataset.edit));
+    }
+  });
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (current < 4) { var btn = $("[data-next]", panels[current]); if (btn) btn.click(); }
+    else if (current === 4) send();
+  });
+
+  // ---------- Review & message ----------
+  function ordered(list, order) { return order.filter(function (x) { return list.indexOf(x) >= 0; }); }
+  function collect() {
+    var city = $("#f-city").value === "Other" ? val("f-city-other") : $("#f-city").value;
+    var sel = $("#f-month");
+    return {
+      name: val("f-name"),
+      age: val("f-age"),
+      city: city,
+      area: val("f-area"),
+      phone: "+91 " + normPhone(val("f-phone")),
+      activity: state.activity,
+      target: val("f-target"),
+      month: sel.value ? sel.options[sel.selectedIndex].textContent : "",
+      cohort: state.cohort,
+      level: state.level,
+      sessions: state.sessions,
+      pace: !$("#wrap-pace").hidden && val("f-pace") ? fmtPace(val("f-pace")) + " /km" : "",
+      distance: !$("#wrap-distance").hidden && val("f-distance") ? val("f-distance") + " km a week" : "",
+      best: val("f-best"),
+      devices: state.devices.map(function (d) { return d === "Nothing" ? "Nothing yet" : d; }).join(", "),
+      days: ordered(state.days, DAY_ORDER).join(", "),
+      times: ordered(state.times, TIME_ORDER).join(", ")
+    };
+  }
+  function sections(d) {
+    return [
+      { title: "About you", step: 0, rows: [["Name", d.name], ["Age", d.age], ["City", d.city], ["Area", d.area], ["WhatsApp", d.phone]] },
+      { title: "Your goal", step: 1, rows: [["Activity", d.activity], ["Next target", d.target], ["Target date", d.month || "No date yet"], ["Cohort", d.cohort]] },
+      { title: "Where you are now", step: 2, rows: [["Level", d.level], ["Sessions per week", d.sessions], ["Easy pace", d.pace], ["Weekly distance", d.distance], ["Recent best", d.best], ["Tracks with", d.devices]] },
+      { title: "When you can train", step: 3, rows: [["Days", d.days], ["Times", d.times]] }
+    ];
+  }
+  function renderReview() {
+    var d = collect();
+    var root = $("#review");
+    root.textContent = "";
+    sections(d).forEach(function (sec) {
+      var box = document.createElement("div");
+      box.className = "rv-sec";
+      var head = document.createElement("div");
+      head.className = "rv-head";
+      var h = document.createElement("h4");
+      h.textContent = sec.title;
+      var edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "rv-edit";
+      edit.dataset.edit = String(sec.step);
+      edit.textContent = "Edit";
+      edit.setAttribute("aria-label", "Edit " + sec.title.toLowerCase());
+      head.appendChild(h);
+      head.appendChild(edit);
+      var dl = document.createElement("dl");
+      dl.className = "rv-list";
+      sec.rows.forEach(function (r) {
+        if (!r[1]) return;
+        var row = document.createElement("div");
+        row.className = "rv-row";
+        var dt = document.createElement("dt");
+        dt.textContent = r[0];
+        var dd = document.createElement("dd");
+        dd.textContent = r[1];
+        row.appendChild(dt);
+        row.appendChild(dd);
+        dl.appendChild(row);
+      });
+      box.appendChild(head);
+      box.appendChild(dl);
+      root.appendChild(box);
+    });
+
+    $("#err-submit").textContent = "";
+  }
+
+  // ---------- Submit to Netlify Forms ----------
+  function send() {
+    if (sending) return;
+    for (var i = 0; i < 4; i++) {
+      var errs = VALIDATORS[i]();
+      if (errs.length) { go(i); showErrors(errs); return; }
+    }
+    var d = collect();
+    var body = new URLSearchParams();
+    body.append("form-name", FORM_NAME);
+    body.append("bot-field", $("#f-bot").value);
+    [
+      ["name", d.name], ["age", d.age], ["city", d.city], ["area", d.area], ["phone", d.phone],
+      ["activity", d.activity], ["target", d.target], ["month", d.month || "No date yet"], ["cohort", d.cohort],
+      ["level", d.level], ["sessions", d.sessions], ["pace", d.pace], ["distance", d.distance], ["best", d.best],
+      ["devices", d.devices], ["days", d.days], ["times", d.times], ["consent", "yes"]
+    ].forEach(function (p) { body.append(p[0], p[1] || ""); });
+
+    var btn = $("#submit-btn");
+    var err = $("#err-submit");
+    sending = true;
+    btn.disabled = true;
+    btn.textContent = "Submitting…";
+    err.textContent = "";
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    }).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      showDone(d);
+    }).catch(function () {
+      err.textContent = "We couldn't send your application. Check your connection and try again.";
+    }).then(function () {
+      sending = false;
+      btn.disabled = false;
+      btn.textContent = "Submit application";
+    });
+  }
+
+  function showDone(d) {
+    $("#done-title").textContent = "You're in, " + d.name.split(/\s+/)[0] + ".";
+    $("#done-sub").textContent = "We'll message you on WhatsApp at " + d.phone + " once we have your match.";
+    $("#share-note").textContent = "";
+    clearDraft();
+    go(5);
+  }
+
+  $("#share-btn").addEventListener("click", function () {
+    var url = location.origin + "/";
+    var note = $("#share-note");
+    function copyLink() {
+      try {
+        navigator.clipboard.writeText(url).then(
+          function () { note.textContent = "Link copied. Send it to someone you'd train with."; },
+          function () { note.textContent = "Share this link: " + url; }
+        );
+      } catch (e) { note.textContent = "Share this link: " + url; }
+    }
+    if (navigator.share) {
+      navigator.share({ title: "GREP", text: "Train with people at your pace, toward the same goal. Join me on GREP.", url: url })
+        .catch(function (e) { if (!e || e.name !== "AbortError") copyLink(); });
+    } else {
+      copyLink();
+    }
+  });
+
+  // ---------- Cohort shortcuts ----------
+  function renderCohort() {
+    $("#joining").hidden = !state.cohort || current === 5;
+    $("#joining-name").textContent = state.cohort;
+  }
+  $$(".cohort-join").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.cohort = b.dataset.cohort;
+      state.activity = b.dataset.activity;
+      var t = $("#f-target");
+      if (!t.value.trim() || t.value === lastPreset.target) t.value = b.dataset.target;
+      var m = $("#f-month");
+      if (b.dataset.month && (!m.value || m.value === lastPreset.month)) m.value = b.dataset.month;
+      lastPreset = { target: b.dataset.target, month: b.dataset.month || "" };
+      syncChips();
+      applyActivity();
+      renderCohort();
+      saveDraft();
+      if (current === 5) go(0);
+      $("#join").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    });
+  });
+  $("#joining-clear").addEventListener("click", function () {
+    state.cohort = "";
+    renderCohort();
+    saveDraft();
+  });
+
+  // ---------- Draft (this browser only) ----------
+  function saveDraft() {
+    try {
+      var v = {};
+      FIELDS.forEach(function (id) { v[id] = document.getElementById(id).value; });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: v, s: state }));
+    } catch (err) { /* storage unavailable */ }
+  }
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (err) { /* storage unavailable */ }
+  }
+  function loadDraft() {
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (d && d.v) {
+        FIELDS.forEach(function (id) {
+          if (typeof d.v[id] === "string") document.getElementById(id).value = d.v[id];
+        });
+      }
+      if (d && d.s) {
+        ["activity", "level", "sessions", "cohort"].forEach(function (k) {
+          if (typeof d.s[k] === "string") state[k] = d.s[k];
+        });
+        ["devices", "days", "times"].forEach(function (k) {
+          if (Array.isArray(d.s[k])) state[k] = d.s[k].filter(function (x) { return typeof x === "string"; });
+        });
+      }
+    } catch (err) { /* ignore a broken draft */ }
+  }
+
+  loadDraft();
+  $("#wrap-city-other").hidden = $("#f-city").value !== "Other";
+  syncChips();
+  applyActivity();
+  renderCohort();
+})();
+</script>
+</body>
+</html>

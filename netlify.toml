@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# The Next.js adapter (@netlify/plugin-nextjs) is added automatically by Netlify.
+
+# Files the cohort preview image reads at runtime.
+[functions]
+  included_files = ["node_modules/@fontsource/inter/files/inter-latin-400-normal.woff", "node_modules/@fontsource/inter/files/inter-latin-700-normal.woff"]
