@@ -47,7 +47,8 @@ export async function getAdmin(): Promise<string | null> {
 
 /** For admin pages and actions: the admin's email, or a redirect to the login page. */
 export async function requireAdmin(): Promise<string> {
-  const email = await getAdmin();
+  const email = await signedInEmail();
   if (!email) redirect("/admin/login");
+  if (!(await isAdminEmail(email))) redirect("/admin/login?error=notadmin");
   return email;
 }

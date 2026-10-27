@@ -19,7 +19,8 @@ test("admin pages require an admin", async ({ page, context }) => {
   // Signed in, but not on the admin list.
   await context.addCookies([{ name: "e2e-admin", value: "stranger@example.com", url: "http://127.0.0.1:3100" }]);
   await page.goto("/admin/cohorts");
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page).toHaveURL(/\/admin\/login\?error=notadmin$/);
+  await expect(page.locator(".admin-notice")).toContainText("isn't on the admin list");
   const csv = await page.request.get("/admin/export", { maxRedirects: 0 });
   expect(csv.status()).toBe(307);
 });
@@ -32,7 +33,8 @@ test("login asks for an emailed code and never reveals who is an admin", async (
   // The email is kept in a cookie for the code step, not in the URL.
   await expect(page).toHaveURL(/\/admin\/login\?sent=1$/);
   await expect(page.getByLabel("Code sent to nobody@example.com")).toBeVisible();
-  await page.fill("#admin-code", "123456");
+  // A pasted code with spaces must still submit (the browser used to block it).
+  await page.fill("#admin-code", " 4002 9461 ");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.locator(".admin-notice")).toHaveText("That code didn't work. Check it, or ask for a new one.");
   await page.getByRole("button", { name: /Use a different email/ }).click();

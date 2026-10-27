@@ -40,14 +40,17 @@ export async function requestLoginLink(formData: FormData) {
 export async function verifyLoginCode(formData: FormData) {
   const store = await cookies();
   const email = store.get(LOGIN_EMAIL_COOKIE)?.value || "";
-  const code = String(formData.get("code") || "").replace(/\s/g, "");
+  // Pasted codes often carry spaces or line breaks; keep the digits only.
+  const code = String(formData.get("code") || "").replace(/\D/g, "");
   if (!email) redirect("/admin/login");
   if (!/^\d{6,10}$/.test(code) || !supabaseConfigured()) redirect("/admin/login?error=code");
-  const { error } = await (await supabaseServer()).auth.verifyOtp({ email, token: code, type: "email" });
-  if (error) {
-    console.error("verifyLoginCode:", error.message);
-    redirect("/admin/login?error=code");
+  const supabase = await supabaseServer();
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: "email" });
+  if (error || !data.session) {
+    console.error("verifyLoginCode:", error?.code, error?.message);
+    redirect(`/admin/login?error=${error?.code === "otp_expired" ? "expired" : "code"}`);
   }
+  if (!(await isAdminEmail(data.session.user.email || email))) redirect("/admin/login?error=notadmin");
   store.delete({ name: LOGIN_EMAIL_COOKIE, path: "/admin" });
   redirect("/admin");
 }

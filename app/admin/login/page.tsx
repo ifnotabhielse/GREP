@@ -8,6 +8,8 @@ const MESSAGES: Record<string, { text: string; ok: boolean }> = {
   email: { text: "Enter a valid email.", ok: false },
   send: { text: "Couldn't send the email just now. Supabase limits how many it sends per hour, so wait a few minutes and try again.", ok: false },
   code: { text: "That code didn't work. Check it, or ask for a new one.", ok: false },
+  expired: { text: "That code has expired or was replaced by a newer one. Only the code in your latest email works.", ok: false },
+  notadmin: { text: "You're signed in, but this email isn't on the admin list. Add it in Supabase: insert into public.admins (email) values ('…').", ok: false },
   link: { text: "That link didn't work. Use the code from the email instead, or ask for a new one.", ok: false },
 };
 
@@ -35,8 +37,7 @@ async function LoginForms({ searchParams }: { searchParams: Promise<Record<strin
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                pattern="[0-9]{6,10}"
-                maxLength={10}
+                maxLength={20}
                 required
                 placeholder="123456"
               />
