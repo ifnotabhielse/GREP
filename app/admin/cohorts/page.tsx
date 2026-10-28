@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { STATUS_PILL, startsText } from "@/components/cohort-card";
 import { listCohortsAdmin } from "@/lib/admin-data";
 import { requireAdmin } from "@/lib/auth";
+import { AdminLoadError } from "@/components/admin/load-error";
 
 export default function CohortsAdminPage({ searchParams }: PageProps<"/admin/cohorts">) {
   return (
@@ -19,7 +20,13 @@ export default function CohortsAdminPage({ searchParams }: PageProps<"/admin/coh
 async function Cohorts({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireAdmin();
   const sp = await searchParams;
-  const cohorts = await listCohortsAdmin();
+  let cohorts;
+  try {
+    cohorts = await listCohortsAdmin();
+  } catch (err) {
+    console.error("admin cohorts page:", err);
+    return <AdminLoadError err={err} />;
+  }
   const saved = typeof sp.saved === "string" ? sp.saved : "";
   return (
     <>

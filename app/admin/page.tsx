@@ -4,6 +4,7 @@ import { APP_STATUSES, filtersToQuery, listApplications, listCohortsAdmin, parse
 import { requireAdmin } from "@/lib/auth";
 import { formatDate, formatMonth, formatTime } from "@/lib/format";
 import { secToPace } from "@/lib/pace";
+import { AdminLoadError } from "@/components/admin/load-error";
 import { signOut, updateApplication } from "./actions";
 
 const TIME_SHORT: Record<string, string> = Object.fromEntries(TIMES.map((t) => [t.value, t.short.replace(/ \(.*\)/, "")]));
@@ -24,7 +25,16 @@ export default function AdminPage({ searchParams }: PageProps<"/admin">) {
 async function Applicants({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const admin = await requireAdmin();
   const f = parseFilters(await searchParams);
-  const [rows, counts, cohorts] = await Promise.all([listApplications(f), statusCounts(), listCohortsAdmin()]);
+  // One query after another (see max_pipeline in lib/db.ts). Show any database error here, to admins only.
+  let rows, counts, cohorts;
+  try {
+    rows = await listApplications(f);
+    counts = await statusCounts();
+    cohorts = await listCohortsAdmin();
+  } catch (err) {
+    console.error("admin page:", err);
+    return <AdminLoadError err={err} />;
+  }
   const open = cohorts.filter((c) => c.status !== "done");
 
   return (
