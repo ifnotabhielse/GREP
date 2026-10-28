@@ -101,7 +101,8 @@ test("a cohort added in admin shows on the site straight away", async ({ page },
   await expect(page.getByRole("heading", { name: "New cohort" })).toBeVisible();
 
   await page.fill('input[name="name"]', `Night Runners ${info.project.name}`);
-  await page.fill('input[name="slug"]', slug);
+  // Pasting the full path should still work: the "/c/" and capitals are cleaned up.
+  await page.fill('input[name="slug"]', `/c/${slug.toUpperCase()}`);
   await page.selectOption('select[name="kind"]', "goal");
   await page.fill('input[name="weeks"]', "6");
   await page.fill('input[name="subtitle"]', "Easy evening miles");

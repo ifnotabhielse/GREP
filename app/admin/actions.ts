@@ -103,7 +103,13 @@ const date = (f: FormData, k: string) => {
 export async function saveCohort(_prev: CohortFormState, f: FormData): Promise<CohortFormState> {
   await requireAdmin();
   const id = text(f, "id", 36);
-  const slug = (text(f, "slug", 80) || "").toLowerCase();
+  // Forgiving link name: accept "/c/name", a full URL, capitals or spaces, and keep just "name".
+  const slug = (text(f, "slug", 200) || "")
+    .toLowerCase()
+    .replace(/^.*\/c\//, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
   const name = text(f, "name", 80);
   const kind = text(f, "kind", 10);
   const status = text(f, "status", 10) || "forming";

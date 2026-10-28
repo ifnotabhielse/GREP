@@ -39,7 +39,7 @@ export function CohortForm({ cohort: c }: { cohort: AdminCohort | null }) {
           <input className="input" name="name" required defaultValue={c?.name ?? ""} placeholder="Tata Mumbai Marathon" />
         </Field>
         <Field label="Link name" hint="The page lives at /c/<link name>. Lowercase, numbers and hyphens.">
-          <input className="input" name="slug" required defaultValue={c?.slug ?? ""} placeholder="tata-mumbai-2027" pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+          <input className="input" name="slug" required defaultValue={c?.slug ?? ""} placeholder="tata-mumbai-2027" />
         </Field>
         <Field label="Type">
           <select className="input" name="kind" defaultValue={c?.kind ?? "goal"}>
