@@ -5,14 +5,14 @@ import { Footer, Nav } from "@/components/chrome";
 import { PaceMini, STATUS_PILL, SessionLines, joinText, paceText, raceLine, startsText } from "@/components/cohort-card";
 import { CohortJoinButton } from "@/components/cohort-join-button";
 import { ShareButton } from "@/components/share-button";
-import { getPublishedCohort, getPublishedCohorts, toPreset, type Cohort } from "@/lib/cohorts";
+import { getPublishedCohort, toPreset, type Cohort } from "@/lib/cohorts";
 
-// Prerender every published cohort at build; new ones render on first visit, then stay cached.
+// Each cohort page is rendered on its first visit and then cached for 5 minutes (or until an admin
+// edit). Nothing is prerendered at build, so a slow database connection can't fail a deploy.
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  const cohorts = await getPublishedCohorts();
-  return cohorts.map((c) => ({ slug: c.slug }));
+  return [];
 }
 
 function summary(c: Cohort) {

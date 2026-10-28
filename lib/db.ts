@@ -16,9 +16,6 @@ function connect() {
   const local = /@(127\.0\.0\.1|localhost)[:/]/.test(url);
   return postgres(url, {
     prepare: false,
-    // One query at a time per connection. postgres.js otherwise pipelines up to 100 queries,
-    // which Supabase's transaction pooler doesn't handle reliably (the /admin page broke on it).
-    max_pipeline: 1,
     ssl: local ? false : "require",
     max: 1, // one per serverless instance; PGlite (local) is single-connection too
     idle_timeout: 20,
