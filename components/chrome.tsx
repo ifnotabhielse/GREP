@@ -23,6 +23,7 @@ export function Nav({ home = false }: { home?: boolean }) {
           <a href={`${p}#how`}>How it works</a>
           <a href={`${p}#cohorts`}>Cohorts</a>
           <a href={`${p}#faq`}>FAQ</a>
+          <a href="/login">Sign in</a>
           <a className="btn btn-primary" href={`${p}#join`}>
             Join
           </a>
@@ -46,6 +47,7 @@ export function Footer({ home = false }: { home?: boolean }) {
           <a href={`${p}#cohorts`}>Cohorts</a>
           <a href={`${p}#join`}>Join</a>
           <a href={`${p}#faq`}>FAQ</a>
+          <a href="/login">Sign in</a>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
         </nav>

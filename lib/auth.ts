@@ -16,7 +16,8 @@ export function e2eBypassEnabled() {
   return process.env.E2E_AUTH_BYPASS === "1" && !process.env.NETLIFY;
 }
 
-async function signedInEmail(): Promise<string | null> {
+/** The email of whoever is signed in (admin or member), or null. */
+export async function signedInEmail(): Promise<string | null> {
   if (e2eBypassEnabled()) {
     const v = (await cookies()).get(E2E_ADMIN_COOKIE)?.value;
     if (v) return v;

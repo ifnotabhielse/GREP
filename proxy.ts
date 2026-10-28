@@ -2,8 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Keeps the admin's Supabase login fresh (Supabase rotates its tokens, and Server Components
- * can't write cookies). Runs only on /admin pages and only when a Supabase cookie is present.
+ * Keeps the Supabase login (admins and members) fresh (Supabase rotates its tokens, and Server Components
+ * can't write cookies). Runs only on /admin, /me and /login and only when a Supabase cookie is present.
  * Access control itself happens on the server for every admin page and action (lib/auth.ts).
  */
 export async function proxy(request: NextRequest) {
@@ -30,4 +30,4 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/admin/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/me/:path*", "/login/:path*"] };

@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { E2E_ADMIN_COOKIE, LOGIN_EMAIL_COOKIE, isAdminEmail, requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { placedEmail, sendMail } from "@/lib/email";
+import { formatDate } from "@/lib/format";
 import { paceToSec } from "@/lib/pace";
 import { siteUrl } from "@/lib/request";
 import { supabaseConfigured, supabaseServer } from "@/lib/supabase";
@@ -65,7 +68,27 @@ export async function updateApplication(formData: FormData) {
   if (op === "place") {
     const cohortId = String(formData.get("cohort_id") || "");
     if (!/^[0-9a-f-]{36}$/.test(cohortId)) throw new Error("Pick a cohort first");
+    const [before] = await sql<{ status: string; cohort_id: string | null; email: string | null; name: string }[]>`
+      select status::text, cohort_id::text, email::text, name from public.applications where id = ${id}::uuid`;
     await sql`update public.applications set status = 'placed', cohort_id = ${cohortId}::uuid where id = ${id}::uuid`;
+    // Tell the person, once per new placement (not when re-saving the same one).
+    if (before?.email && !(before.status === "placed" && before.cohort_id === cohortId)) {
+      const [c] = await sql<{ name: string; starts_on: string | null; starts_label: string | null; sessions: string[]; area: string | null }[]>`
+        select name, starts_on::text, starts_label, sessions, area from public.cohorts where id = ${cohortId}::uuid`;
+      if (c) {
+        const site = siteUrl(await headers());
+        const mail = placedEmail({
+          firstName: before.name.trim().split(/\s+/)[0] || "there",
+          cohortName: c.name,
+          starts: c.starts_on ? formatDate(c.starts_on) : c.starts_label || undefined,
+          sessions: c.sessions,
+          area: c.area,
+          site,
+        });
+        const to = before.email;
+        after(() => sendMail({ to, ...mail }).catch((err) => console.error("placement email failed", err)));
+      }
+    }
   } else if (op === "waitlist") {
     await sql`update public.applications set status = 'waitlist', cohort_id = null where id = ${id}::uuid`;
   } else if (op === "decline") {

@@ -77,3 +77,34 @@ export function adminAlertEmail(a: { name: string; phone: string; email: string;
 <p style="margin:24px 0 0"><a href="${esc(a.adminUrl)}" style="color:#2997ff">Open the admin screen</a></p>`);
   return { subject: `New GREP application: ${a.name}${a.cohortName ? ` · ${a.cohortName}` : ""}`, text, html };
 }
+
+/** Sent when an admin places someone in a cohort. */
+export function placedEmail(a: { firstName: string; cohortName: string; starts?: string; sessions: string[]; area?: string | null; site: string }) {
+  const signIn = `${a.site}/login`;
+  const facts: [string, string][] = [];
+  if (a.starts) facts.push(["Starts", a.starts]);
+  if (a.sessions.length) facts.push(["Sessions", a.sessions.join("; ")]);
+  if (a.area) facts.push(["Area", a.area]);
+  const text = [
+    `Hi ${a.firstName},`,
+    ``,
+    `You're in: ${a.cohortName}.`,
+    ...facts.map(([k, v]) => `${k}: ${v}`),
+    ``,
+    `Sign in to see your group, the meeting point and the WhatsApp group link:`,
+    signIn,
+    ``,
+    `Use this email address to sign in. We'll send you a one-time code.`,
+    ``,
+    `GREP`,
+  ].join("\n");
+  const html = layout(`
+<h1 style="margin:0 0 16px;font-size:28px;line-height:1.1">You're in, ${esc(a.firstName)}.</h1>
+<p style="margin:0 0 16px;color:#a1a1a6">You've been placed in <span style="color:#f5f5f7">${esc(a.cohortName)}</span>.</p>
+${facts.length ? `<table style="border-collapse:collapse;width:100%;margin:0 0 8px">${facts
+    .map(([k, v]) => `<tr><td style="padding:6px 12px 6px 0;color:#a1a1a6;vertical-align:top">${esc(k)}</td><td style="padding:6px 0">${esc(v)}</td></tr>`)
+    .join("")}</table>` : ""}
+<p style="margin:24px 0"><a href="${esc(signIn)}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;padding:12px 22px;border-radius:980px">See my cohort</a></p>
+<p style="margin:0;color:#6e6e73;font-size:14px">Sign in with this email address. We'll send you a one-time code. Your group, the meeting point and the WhatsApp group link are there.</p>`);
+  return { subject: `You're in: ${a.cohortName}`, text, html };
+}
